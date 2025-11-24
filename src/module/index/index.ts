@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'app-index',
   imports: [],
@@ -7,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrl: './index.css',
 })
 export class Index {
+
+
+  buttonsexo(){
+    console.log("sexo");
+  }
 
 }
