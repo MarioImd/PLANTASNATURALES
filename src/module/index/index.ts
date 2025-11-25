@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+
 @Component({
   selector: 'app-index',
-  imports: [],
+  imports: [ButtonModule],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
 export class Index {
 
 
-  buttonsexo(){
+  buttonsexo() {
     console.log("sexo");
   }
 

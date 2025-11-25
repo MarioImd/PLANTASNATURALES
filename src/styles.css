@@ -3,3 +3,26 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* OVERRIDE GLOBAL PARA SUBMENU DE PRIMENG - FORZAR VISIBILIDAD */
+.p-submenu-list {
+  background: #ffffff !important;
+}
+
+.p-submenu-list .p-menubar-item-link {
+  color: #2d5016 !important;
+  background: transparent !important;
+}
+
+.p-submenu-list .p-menubar-item-link span {
+  color: #2d5016 !important;
+  font-weight: 500 !important;
+}
+
+.p-submenu-list .p-menubar-item-link:hover {
+  background: #f0f7ed !important;
+}
+
+.p-submenu-list .p-menubar-item-link .pi {
+  color: #4a7c2c !important;
+}
