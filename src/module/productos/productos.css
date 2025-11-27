@@ -1,0 +1,241 @@
+/* Contenedor principal */
+.productos-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2d4a3e;
+    line-height: 1.6;
+    background-color: #fafaf8;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #3d7a5c 0%, #6ba587 100%);
+    color: #ffffff;
+    padding: 70px 20px;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 2.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.92;
+    margin-bottom: 1.5rem;
+}
+
+.hero-decoration {
+    width: 70px;
+    height: 3px;
+    background-color: #ffffff;
+    margin: 0 auto;
+    border-radius: 2px;
+    opacity: 0.8;
+}
+
+/* Product Lines Section */
+.product-lines-section {
+    padding: 60px 20px;
+    background-color: #ffffff;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.3rem;
+    color: #3d7a5c;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.section-intro {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    color: #6b7c75;
+    font-size: 1.05rem;
+}
+
+/* DataView Container - Sin estilos personalizados para usar el diseño de PrimeNG */
+.dataview-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Benefits Section */
+.benefits-section {
+    padding: 60px 20px;
+    background-color: #f9faf9;
+}
+
+.benefits-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.benefit-item {
+    background-color: #ffffff;
+    padding: 28px 22px;
+    border-radius: 6px;
+    text-align: center;
+    border: 1px solid #e0e5e3;
+    transition: all 0.2s ease;
+}
+
+.benefit-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 10px rgba(61, 122, 92, 0.12);
+    border-color: #a8d5ba;
+    background-color: #f1f8f4;
+}
+
+.benefit-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.85;
+}
+
+.benefit-item h3 {
+    color: #3d7a5c;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.benefit-item p {
+    color: #6b7c75;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+/* Process Section */
+.process-section {
+    padding: 60px 20px;
+    background-color: #ffffff;
+}
+
+.process-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.process-card {
+    background-color: #f5f7f6;
+    padding: 30px 25px;
+    border-radius: 6px;
+    text-align: center;
+    border: 1px solid #e0e5e3;
+    transition: all 0.2s ease;
+}
+
+.process-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 10px rgba(61, 122, 92, 0.1);
+    border-color: #a8d5ba;
+}
+
+.process-number {
+    width: 50px;
+    height: 50px;
+    background-color: #3d7a5c;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 auto 1rem;
+}
+
+.process-card h3 {
+    color: #3d7a5c;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.process-card p {
+    color: #6b7c75;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #3d7a5c 0%, #5dae9e 100%);
+    color: #ffffff;
+    padding: 55px 20px;
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-size: 1.9rem;
+    margin-bottom: 0.9rem;
+    font-weight: 600;
+}
+
+.cta-section p {
+    font-size: 1.05rem;
+    margin-bottom: 1.8rem;
+    opacity: 0.92;
+}
+
+.cta-button {
+    background-color: #ffffff;
+    color: #3d7a5c;
+    padding: 18px 48px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.cta-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    background-color: #f8f8f8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.05rem;
+    }
+
+    .section-title {
+        font-size: 1.9rem;
+    }
+
+    .benefits-grid,
+    .process-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .benefit-item,
+    .process-card {
+        padding: 25px 20px;
+    }
+}
