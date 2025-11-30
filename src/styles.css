@@ -26,3 +26,104 @@ body {
 .p-submenu-list .p-menubar-item-link .pi {
   color: #4a7c2c !important;
 }
+
+/* ==================== ANIMACIONES DE ENTRADA DE PÁGINA ==================== */
+/* Animación sutil para todas las páginas al cargar */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aplicar animación a todos los contenedores principales */
+.productos-container,
+.about-container,
+.home-container,
+.puntos-venta-container,
+.contacto-container {
+  animation: pageEnter 0.6s ease-out;
+}
+
+/* Animación para secciones hero */
+.hero-section {
+  animation: pageEnter 0.8s ease-out;
+}
+
+/* Animación escalonada para elementos de grid */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aplicar animación escalonada a tarjetas y elementos de grid */
+.category-card,
+.benefit-item,
+.value-item,
+.process-card,
+.feature-card,
+.info-card,
+.story-card {
+  animation: fadeInUp 0.6s ease-out backwards;
+}
+
+/* Retrasos escalonados para crear efecto cascada */
+.category-card:nth-child(1),
+.benefit-item:nth-child(1),
+.value-item:nth-child(1),
+.process-card:nth-child(1),
+.feature-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.category-card:nth-child(2),
+.benefit-item:nth-child(2),
+.value-item:nth-child(2),
+.process-card:nth-child(2),
+.feature-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.category-card:nth-child(3),
+.benefit-item:nth-child(3),
+.value-item:nth-child(3),
+.process-card:nth-child(3),
+.feature-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.category-card:nth-child(4),
+.benefit-item:nth-child(4),
+.value-item:nth-child(4),
+.process-card:nth-child(4),
+.feature-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+/* Animación suave para títulos de sección */
+.section-title {
+  animation: fadeInUp 0.7s ease-out;
+}
+
+/* Animación para botones CTA */
+.cta-section {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* Suavizar transiciones entre páginas */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

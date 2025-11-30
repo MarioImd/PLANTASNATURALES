@@ -1,1 +1,225 @@
-<p>plantas works!</p>
+<div class="productos-container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Plantas Naturales</h1>
+            <p class="hero-subtitle">El poder curativo de la naturaleza en cada hoja</p>
+            <div class="hero-decoration"></div>
+        </div>
+    </section>
+
+    <!-- ============================================================================ -->
+    <!-- TODO BACKEND: INTEGRACIÓN DE PRODUCTOS DESDE LA BASE DE DATOS               -->
+    <!-- ============================================================================ -->
+    <!-- 
+    PASOS PARA LA INTEGRACIÓN DEL BACKEND:
+    
+    1. CREAR SERVICIO DE PRODUCTOS (ProductService):
+       - Ubicación sugerida: src/services/product.service.ts
+       - Método principal: getProductsByCategory(category: string): Observable<Product[]>
+       - Endpoint del backend: GET /api/products?category=Plantas Naturales
+    
+    2. MODELO DE DATOS (Product Interface):
+       - id: number | string
+       - name: string (nombre del producto)
+       - category: string (categoría del producto)
+       - image: string (URL de la imagen del producto)
+       - price: number (precio del producto)
+       - rating: number (calificación del producto, 0-5)
+       - inventoryStatus: 'INSTOCK' | 'LOWSTOCK' | 'OUTOFSTOCK'
+       - description?: string (descripción opcional)
+    
+    3. REEMPLAZAR EL SIGNAL products():
+       - Actualmente usa datos de ejemplo filtrados por categoría
+       - Debe reemplazarse con: this.productService.getProductsByCategory('Plantas Naturales')
+       - Manejar estados de carga y error apropiadamente
+    
+    4. CONFIGURAR IMÁGENES:
+       - Actualizar la URL base de las imágenes
+       - Actualmente: 'https://primefaces.org/cdn/primeng/images/demo/product/'
+       - Cambiar a: URL del servidor de imágenes de producción
+       - Ejemplo: 'https://api.tudominio.com/images/products/'
+    
+    5. IMPLEMENTAR FUNCIONALIDAD DE CARRITO:
+       - Crear método addToCart(productId: number | string)
+       - Conectar con el servicio de carrito de compras
+       - Manejar la lógica de agregar productos al carrito
+    
+    6. IMPLEMENTAR FUNCIONALIDAD DE FAVORITOS:
+       - Crear método addToFavorites(productId: number | string)
+       - Conectar con el servicio de favoritos/wishlist
+       - Actualizar el estado visual del botón de favoritos
+    -->
+    <!-- ============================================================================ -->
+
+    <section class="product-lines-section">
+        <h2 class="section-title">Catálogo de Plantas Naturales Pronathom®</h2>
+        <p class="section-intro">
+            Descubre nuestra selección de plantas medicinales y aromáticas cultivadas de forma natural y sustentable
+        </p>
+
+        <!-- PrimeNG DataView Component -->
+        <div class="dataview-container">
+            <!-- 
+            TODO BACKEND: Reemplazar products() con datos del servicio
+            Ejemplo: [value]="productService.getProductsByCategory('Plantas Naturales') | async"
+            -->
+            <p-dataview [value]="products()" [rows]="5" [paginator]="true">
+                <ng-template #list let-items>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                        <div *ngFor="let item of items; let first = first">
+                            <div style="display: flex; flex-direction: column; padding: 1.5rem; gap: 1rem; border-top: 1px solid #dee2e6;"
+                                [style.border-top]="first ? 'none' : '1px solid #dee2e6'">
+                                <!-- Imagen del Producto -->
+                                <div style="position: relative; width: 160px;">
+                                    <!-- 
+                                    TODO BACKEND: Actualizar URL de imagen
+                                    Cambiar 'https://primefaces.org/cdn/primeng/images/demo/product/' 
+                                    por la URL de tu servidor de imágenes
+                                    Ejemplo: [src]="imageBaseUrl + item.image"
+                                    -->
+                                    <img style="display: block; margin: 0 auto; border-radius: 6px; width: 100%;"
+                                        [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
+                                        [alt]="item.name" />
+                                    <!-- 
+                                    TODO BACKEND: inventoryStatus debe venir de la BD
+                                    Valores posibles: 'INSTOCK', 'LOWSTOCK', 'OUTOFSTOCK'
+                                    -->
+                                    <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)"
+                                        style="position: absolute; left: 4px; top: 4px;" />
+                                </div>
+
+                                <!-- Información del Producto -->
+                                <div
+                                    style="display: flex; flex-direction: column; justify-content: space-between; flex: 1; gap: 1.5rem;">
+                                    <div
+                                        style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                                        <div>
+                                            <!-- 
+                                            TODO BACKEND: category debe venir de la BD
+                                            Ejemplo: "Suplementos", "Tés", "Aceites", etc.
+                                            -->
+                                            <span style="font-weight: 500; color: #6c757d; font-size: 0.875rem;">{{
+                                                item.category }}</span>
+                                            <!-- 
+                                            TODO BACKEND: name debe venir de la BD
+                                            Nombre completo del producto
+                                            -->
+                                            <div style="font-size: 1.125rem; font-weight: 500; margin-top: 0.5rem;">
+                                                {{ item.name }}
+                                            </div>
+                                        </div>
+                                        <!-- 
+                                        TODO BACKEND: rating debe venir de la BD
+                                        Calificación del producto (0-5)
+                                        Puede calcularse del promedio de reseñas de usuarios
+                                        -->
+                                        <div
+                                            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border-radius: 1.5rem; background-color: #f8f9fa;">
+                                            <span style="font-weight: 500; font-size: 0.875rem;">{{ item.rating
+                                                }}</span>
+                                            <i class="pi pi-star-fill" style="color: #fbbf24;"></i>
+                                        </div>
+                                    </div>
+
+                                    <!-- Precio y Acciones -->
+                                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                                        <!-- 
+                                        TODO BACKEND: price debe venir de la BD
+                                        Precio del producto en la moneda local
+                                        -->
+                                        <span style="font-size: 1.25rem; font-weight: 600;">
+                                            {{ '$' + item.price }}
+                                        </span>
+                                        <div style="display: flex; flex-direction: row-reverse; gap: 0.5rem;">
+                                            <!-- 
+                                            TODO BACKEND: Implementar funcionalidad de favoritos
+                                            Agregar (click)="addToFavorites(item.id)"
+                                            Considerar agregar estado visual para productos ya en favoritos
+                                            -->
+                                            <p-button icon="pi pi-heart" [outlined]="true" />
+                                            <!-- 
+                                            TODO BACKEND: Implementar funcionalidad de carrito
+                                            Agregar (click)="addToCart(item.id)"
+                                            El botón se deshabilita automáticamente si inventoryStatus === 'OUTOFSTOCK'
+                                            -->
+                                            <p-button icon="pi pi-shopping-cart" label="Buy Now"
+                                                [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-dataview>
+        </div>
+    </section>
+
+    <!-- Beneficios -->
+    <section class="benefits-section">
+        <h2 class="section-title">¿Por Qué Elegir Pronathom®?</h2>
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <div class="benefit-icon">✓</div>
+                <h3>100% Natural</h3>
+                <p>Todos nuestros productos están elaborados con ingredientes naturales de la más alta calidad.</p>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-icon">🌱</div>
+                <h3>Sustentable</h3>
+                <p>Procesos de producción responsables con el medio ambiente y las comunidades locales.</p>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-icon">🔬</div>
+                <h3>Calidad Garantizada</h3>
+                <p>Productos probados y certificados que cumplen con los más altos estándares de calidad.</p>
+            </div>
+
+            <div class="benefit-item">
+                <div class="benefit-icon">❤️</div>
+                <h3>Hecho con Amor</h3>
+                <p>Cada producto es elaborado con dedicación y cuidado para tu bienestar y el de tu familia.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proceso de Elaboración -->
+    <section class="process-section">
+        <h2 class="section-title">Nuestro Proceso</h2>
+        <div class="process-grid">
+            <div class="process-card">
+                <div class="process-number">1</div>
+                <h3>Selección</h3>
+                <p>Seleccionamos cuidadosamente las mejores materias primas naturales de proveedores confiables.</p>
+            </div>
+
+            <div class="process-card">
+                <div class="process-number">2</div>
+                <h3>Elaboración</h3>
+                <p>Procesamos los ingredientes con técnicas artesanales que preservan sus propiedades naturales.</p>
+            </div>
+
+            <div class="process-card">
+                <div class="process-number">3</div>
+                <h3>Control de Calidad</h3>
+                <p>Cada producto pasa por rigurosos controles de calidad antes de llegar a tus manos.</p>
+            </div>
+
+            <div class="process-card">
+                <div class="process-number">4</div>
+                <h3>Distribución</h3>
+                <p>Empacamos y distribuimos con cuidado para mantener la frescura y calidad del producto.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>¿Listo para descubrir nuestras plantas naturales?</h2>
+        <p>Explora nuestra línea de plantas medicinales y encuentra la perfecta para ti</p>
+        <a routerLink="/puntos-venta" class="cta-button">Ver Puntos de Venta</a>
+    </section>
+</div>

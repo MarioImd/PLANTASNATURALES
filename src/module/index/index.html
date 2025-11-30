@@ -1,2 +1,142 @@
-<p>index works!</p>
-<p-button routerLink="/about">sexo</p-button>
+<div class="home-container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">🌿 Desde 1997</div>
+            <h1 class="hero-title">Pronathom®</h1>
+            <p class="hero-subtitle">Conectando la naturaleza con tu bienestar</p>
+            <p class="hero-description">
+                Productos naturistas y homeopáticos de la más alta calidad para mejorar tu salud y la de tu familia
+            </p>
+            <div class="hero-buttons">
+                <a routerLink="/productos" class="btn-primary">
+                    <span>Explorar Productos</span>
+                    <i class="pi pi-arrow-right"></i>
+                </a>
+                <a routerLink="/about" class="btn-secondary">
+                    <span>Conocer Más</span>
+                </a>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span>Descubre más</span>
+            <i class="pi pi-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="section-header">
+            <h2 class="section-title">Nuestras Líneas de Productos</h2>
+            <p class="section-subtitle">Explora nuestras categorías especializadas</p>
+        </div>
+
+        <div class="categories-grid">
+            <div *ngFor="let category of categories" class="category-card" [routerLink]="category.route">
+                <div class="category-icon" [style.background]="category.color">
+                    {{ category.icon }}
+                </div>
+                <h3 class="category-title">{{ category.title }}</h3>
+                <p class="category-description">{{ category.description }}</p>
+                <div class="category-arrow">
+                    <i class="pi pi-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2 class="section-title">¿Por Qué Elegirnos?</h2>
+            <p class="section-subtitle">Compromiso con tu salud y el medio ambiente</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌱</div>
+                <h3>100% Natural</h3>
+                <p>Ingredientes naturales cuidadosamente seleccionados de la más alta calidad</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔬</div>
+                <h3>Calidad Garantizada</h3>
+                <p>Productos probados y certificados bajo estrictos controles de calidad</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">♻️</div>
+                <h3>Sustentable</h3>
+                <p>Procesos responsables con el medio ambiente y comunidades locales</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">❤️</div>
+                <h3>Con Amor</h3>
+                <p>Cada producto elaborado con dedicación para tu bienestar</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">27+</div>
+                <div class="stat-label">Años de Experiencia</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">20+</div>
+                <div class="stat-label">Productos Naturales</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Líneas Especializadas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Satisfacción</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Preview Section -->
+    <section class="about-preview-section">
+        <div class="about-preview-content">
+            <div class="about-preview-text">
+                <div class="about-badge">Nuestra Historia</div>
+                <h2>Más de 27 Años Cuidando tu Salud</h2>
+                <p>
+                    Desde octubre de 1997, nos dedicamos a la manufactura de productos naturistas y homeopáticos.
+                    Nuestro primer producto, <strong>Bio-Line</strong>, marcó el inicio de un crecimiento constante
+                    basado en la calidad y confianza de nuestros clientes.
+                </p>
+                <p>
+                    Hoy contamos con más de 20 productos clasificados en tres líneas: corporal cosmético,
+                    cápsulas vía oral y línea veterinaria.
+                </p>
+                <a routerLink="/about" class="btn-link">
+                    <span>Conocer Nuestra Historia</span>
+                    <i class="pi pi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="about-preview-image">
+                <div class="image-placeholder">
+                    <div class="placeholder-icon">🌿</div>
+                    <p>Pronathom®</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>¿Listo para Mejorar tu Bienestar?</h2>
+            <p>Descubre nuestra amplia selección de productos naturales y encuentra el perfecto para ti</p>
+            <div class="cta-buttons">
+                <a routerLink="/productos" class="btn-cta-primary">Ver Todos los Productos</a>
+                <a routerLink="/puntos-venta" class="btn-cta-secondary">Encontrar Punto de Venta</a>
+            </div>
+        </div>
+    </section>
+</div>
