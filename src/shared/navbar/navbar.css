@@ -12,7 +12,7 @@
 }
 
 .navbar-brand:hover {
-    background: rgba(61, 122, 92, 0.1);
+    background: rgba(46, 125, 50, 0.1);
 }
 
 .brand-icon {
@@ -39,13 +39,13 @@
 .brand-name {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #3d7a5c;
+    color: #2e7d32;
     letter-spacing: -0.5px;
 }
 
 .brand-tagline {
     font-size: 0.75rem;
-    color: #6b7c75;
+    color: #666;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -53,30 +53,30 @@
 
 /* Menu Items */
 .menu-icon {
-    color: #3d7a5c;
+    color: #2e7d32;
     font-size: 1.1rem;
     margin-right: 10px;
 }
 
 .menu-label {
-    color: #2d4a3e;
+    color: #2e7d32;
     font-weight: 600;
     font-size: 1.05rem;
 }
 
 /* Active Menu Item */
 .active-menu-item {
-    background: rgba(61, 122, 92, 0.1) !important;
+    background: rgba(46, 125, 50, 0.1) !important;
     border-radius: 6px;
 }
 
 .active-menu-item .menu-label {
-    color: #3d7a5c !important;
+    color: #2e7d32 !important;
     font-weight: 600;
 }
 
 .active-menu-item .menu-icon {
-    color: #3d7a5c !important;
+    color: #2e7d32 !important;
 }
 
 /* Navbar End - Contact Button */
@@ -91,20 +91,20 @@
     align-items: center;
     gap: 10px;
     padding: 12px 24px;
-    background: linear-gradient(135deg, #3d7a5c 0%, #4a9d6f 100%);
+    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
     color: #ffffff;
     border-radius: 50px;
     font-weight: 600;
     font-size: 1rem;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(61, 122, 92, 0.2);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .contact-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(61, 122, 92, 0.3);
-    background: linear-gradient(135deg, #2d5a43 0%, #3d7a5c 100%);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
 }
 
 .contact-button i {
@@ -115,7 +115,7 @@
 ::ng-deep .custom-menubar {
     background: #ffffff !important;
     border: none !important;
-    border-bottom: 1px solid #e8f5ed !important;
+    border-bottom: 1px solid #e8f5e9 !important;
     padding: 10px 20px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
 }
@@ -131,23 +131,23 @@
 }
 
 ::ng-deep .custom-menubar .p-menubar-item-link:hover {
-    background: rgba(61, 122, 92, 0.08) !important;
+    background: rgba(46, 125, 50, 0.08) !important;
 }
 
 ::ng-deep .custom-menubar .p-menubar-item-link:hover .menu-label {
-    color: #3d7a5c !important;
+    color: #2e7d32 !important;
 }
 
 ::ng-deep .custom-menubar .p-menubar-item-link:hover .menu-icon {
-    color: #3d7a5c !important;
+    color: #2e7d32 !important;
 }
 
 /* Submenu Styles */
 ::ng-deep .p-menubar-submenu {
     background: #ffffff !important;
-    border: 1px solid #e8f5ed !important;
+    border: 1px solid #e8f5e9 !important;
     border-radius: 12px !important;
-    box-shadow: 0 4px 20px rgba(61, 122, 92, 0.15) !important;
+    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.15) !important;
     padding: 8px !important;
     margin-top: 8px !important;
 }
@@ -159,15 +159,15 @@
 }
 
 ::ng-deep .p-menubar-submenu .p-menuitem-link:hover {
-    background: rgba(61, 122, 92, 0.1) !important;
+    background: rgba(46, 125, 50, 0.1) !important;
 }
 
 ::ng-deep .p-menubar-submenu .p-menuitem-link:hover .menu-label {
-    color: #3d7a5c !important;
+    color: #2e7d32 !important;
 }
 
 ::ng-deep .p-menubar-submenu .p-menuitem-separator {
-    border-top: 1px solid #e8f5ed !important;
+    border-top: 1px solid #e8f5e9 !important;
     margin: 8px 0 !important;
 }
 
