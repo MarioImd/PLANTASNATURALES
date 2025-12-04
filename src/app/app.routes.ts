@@ -7,6 +7,7 @@ import { Accesorios } from '../module/productos/accesorios/accesorios';
 import { Veterinaria } from '../module/productos/veterinaria/veterinaria';
 import { PuntosVenta } from '../module/puntos-venta/puntos-venta';
 import { Contacto } from '../module/contacto/contacto';
+import { AgregarProductoComponent } from '../module/productos/agregar_Producto/agregar_producto.component';
 
 export const routes: Routes = [
   { path: '', component: Index },
@@ -17,4 +18,8 @@ export const routes: Routes = [
   { path: 'veterinaria', component: Veterinaria },
   { path: 'puntos-venta', component: PuntosVenta },
   { path: 'contacto', component: Contacto },
+    {
+    path: 'productos/agregar',
+    component: AgregarProductoComponent
+  },
 ];
