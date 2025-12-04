@@ -34,7 +34,8 @@ export class AgregarProductoComponent implements OnInit {
     descripcion: '',
     precio: 0,
     categoria: '',    // ← CAMBIADO: 'tipo' por 'categoria'
-    stock: 0
+    stock: 0,
+    mercado: ''
   };
 
   // Variable con el nombre CORRECTO (sin tilde si prefieres)
@@ -91,7 +92,8 @@ export class AgregarProductoComponent implements OnInit {
           descripcion: '',
           precio: 0,
           categoria: '',
-          stock: 0
+          stock: 0,
+          mercado: ''
         };
         
         // Redirigir después de 2 segundos

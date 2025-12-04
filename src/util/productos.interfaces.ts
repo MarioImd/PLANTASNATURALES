@@ -8,6 +8,7 @@ export interface Producto {
   estado: boolean;
   creado: string;
   actualizado: string;
+  mercado: string;
 }
 
 export interface ProductoFormData {
@@ -16,4 +17,5 @@ export interface ProductoFormData {
   precio: number;
   categoria: string;   // ← CAMBIAR de 'tipo' a 'categoria'
   stock: number;
+  mercado: string;
 }

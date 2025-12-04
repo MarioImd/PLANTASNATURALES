@@ -8,6 +8,9 @@ import { Veterinaria } from '../module/productos/veterinaria/veterinaria';
 import { PuntosVenta } from '../module/puntos-venta/puntos-venta';
 import { Contacto } from '../module/contacto/contacto';
 import { AgregarProductoComponent } from '../module/productos/agregar_Producto/agregar_producto.component';
+import { EditarProductoComponent } from '../module/productos/editar_producto/editar-producto.component';
+import { AuthGuard } from '../services/guards/auth.guards';
+import { LoginComponent } from '../module/login/login.component';
 
 export const routes: Routes = [
   { path: '', component: Index },
@@ -18,8 +21,17 @@ export const routes: Routes = [
   { path: 'veterinaria', component: Veterinaria },
   { path: 'puntos-venta', component: PuntosVenta },
   { path: 'contacto', component: Contacto },
-    {
-    path: 'productos/agregar',
-    component: AgregarProductoComponent
+     { 
+    path: 'productos/agregar', 
+    component: AgregarProductoComponent,
+    canActivate: [AuthGuard] // Protege esta ruta
   },
+  { 
+    path: 'productos/editar/:id', 
+    component: EditarProductoComponent,
+    canActivate: [AuthGuard] // Protege esta ruta
+  },
+
+  {path:'login', component: LoginComponent},
+
 ];

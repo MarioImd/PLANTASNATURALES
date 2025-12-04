@@ -1,0 +1,176 @@
+<div class="container mx-auto p-6">
+  <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Editar Producto</h2>
+      <p class="text-gray-600">Modifica la información del producto seleccionado</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Campo Nombre -->
+      <div class="mb-4">
+        <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">
+          Nombre *
+        </label>
+        <input
+          type="text"
+          id="nombre"
+          formControlName="nombre"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Ingrese el nombre del producto"
+        />
+        <div *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched" 
+             class="mt-1 text-sm text-red-600">
+          El nombre es requerido (mínimo 2 caracteres)
+        </div>
+      </div>
+
+      <!-- Campo Descripción (Email) -->
+      <div class="mb-4">
+        <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1">
+          Email *
+        </label>
+        <input
+          type="email"
+          id="descripcion"
+          formControlName="descripcion"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          placeholder="ejemplo@dominio.com"
+        />
+        <div *ngIf="productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched" 
+             class="mt-1 text-sm text-red-600">
+          Ingrese un email válido
+        </div>
+      </div>
+
+      <!-- Campo Precio -->
+      <div class="mb-4">
+        <label for="precio" class="block text-sm font-medium text-gray-700 mb-1">
+          Precio *
+        </label>
+        <div class="relative">
+          <span class="absolute left-3 top-2 text-gray-500">$</span>
+          <input
+            type="number"
+            id="precio"
+            formControlName="precio"
+            step="0.01"
+            min="0"
+            class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="0.00"
+          />
+        </div>
+        <div *ngIf="productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched" 
+             class="mt-1 text-sm text-red-600">
+          El precio debe ser mayor a 0
+        </div>
+      </div>
+
+      <!-- Campo Categoría -->
+      <div class="mb-4">
+        <label for="categoria" class="block text-sm font-medium text-gray-700 mb-1">
+          Categoría *
+        </label>
+        <select
+          id="categoria"
+          formControlName="categoria"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">Seleccione una categoría</option>
+          <option value="Infusión">Infusión</option>
+          <option value="Té">Té</option>
+          <option value="Hierba">Hierba</option>
+          <option value="Especia">Especia</option>
+          <option value="Suplemento">Suplemento</option>
+        </select>
+        <div *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched" 
+             class="mt-1 text-sm text-red-600">
+          Seleccione una categoría
+        </div>
+      </div>
+
+      <!-- Campo Stock -->
+      <div class="mb-4">
+        <label for="stock" class="block text-sm font-medium text-gray-700 mb-1">
+          Stock *
+        </label>
+        <input
+          type="number"
+          id="stock"
+          formControlName="stock"
+          min="0"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          placeholder="0"
+        />
+        <div *ngIf="productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched" 
+             class="mt-1 text-sm text-red-600">
+          El stock no puede ser negativo
+        </div>
+      </div>
+
+      <!-- Campo Mercado -->
+      <div class="mb-6">
+        <label for="mercado" class="block text-sm font-medium text-gray-700 mb-1">
+          Mercado
+        </label>
+        <input
+          type="text"
+          id="mercado"
+          formControlName="mercado"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Ej: Mercado Central, Online, etc."
+        />
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="flex justify-end space-x-4 pt-4 border-t">
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="productoForm.invalid || isLoading"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span *ngIf="!isLoading">Guardar Cambios</span>
+          <span *ngIf="isLoading">Guardando...</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Mensajes de error/success -->
+    <div *ngIf="errorMessage" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+      <p class="text-red-700 text-sm">{{ errorMessage }}</p>
+    </div>
+
+    <!-- Información del producto -->
+    <div *ngIf="producto" class="mt-6 p-4 bg-gray-50 rounded-md">
+      <h3 class="text-sm font-medium text-gray-700 mb-2">Información del Producto</h3>
+      <div class="grid grid-cols-2 gap-2 text-sm">
+        <div>
+          <span class="font-medium text-gray-600">ID:</span>
+          <span class="ml-2">{{ producto.id }}</span>
+        </div>
+        <div>
+          <span class="font-medium text-gray-600">Estado:</span>
+          <span class="ml-2" [ngClass]="producto.estado ? 'text-green-600' : 'text-red-600'">
+            {{ producto.estado ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+        <div>
+          <span class="font-medium text-gray-600">Creado:</span>
+          <span class="ml-2">{{ producto.creado | date:'short' }}</span>
+        </div>
+        <div>
+          <span class="font-medium text-gray-600">Actualizado:</span>
+          <span class="ml-2">{{ producto.actualizado | date:'short' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

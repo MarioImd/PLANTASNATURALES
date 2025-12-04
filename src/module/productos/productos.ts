@@ -5,10 +5,11 @@ import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { Producto } from '../../util/productos.interfaces';
 import { ProductoService } from '../../services/ProductosServices/productos.service';
+import { AuthService } from '../../services/auth/auth.services';
 
 @Component({
   selector: 'app-productos',
@@ -18,7 +19,8 @@ import { ProductoService } from '../../services/ProductosServices/productos.serv
     RouterLink, 
     DataViewModule, 
     TagModule,
-    ToastModule
+    ToastModule,
+    
   ],
   templateUrl: './productos.html',
   styleUrl: './productos.css',
@@ -29,13 +31,22 @@ export class Productos implements OnInit {
   productosOriginales: Producto[] = []; // Para guardar los datos originales
   isLoading = true;
   error = signal<string | null>(null);
+  isAdmin = false; // Variable para controlar si es admin
 
   constructor(
     private productoService: ProductoService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+       this.isAdmin = this.authService.isAdmin();
+    
+    // Suscribirse a cambios (opcional)
+    this.authService.isAdmin$.subscribe(isAdmin => {
+      this.isAdmin = isAdmin;
+    });
+    
     this.cargarProductos();
   }
 
@@ -277,5 +288,32 @@ export class Productos implements OnInit {
   mostrarDatosOriginales(): void {
     console.log('Productos originales:', this.productosOriginales);
     console.log('Productos mapeados:', this.products());
+  }
+
+    // Método para confirmar eliminación
+  // Método para confirmar eliminación
+  confirmarEliminar(producto: Producto): void {
+    const confirmacion = window.confirm(
+      `¿Estás seguro de que deseas eliminar el producto "${producto.nombre}"?\n\n` +
+      'Esta acción cambiará el estado del producto a inactivo.'
+    );
+    
+    if (confirmacion) {
+      this.eliminarProducto(producto.id);
+    }
+  }
+  
+  // Método para eliminar el producto
+  eliminarProducto(id: number): void {
+    this.productoService.deleteProducto(id).subscribe({
+      next: (response) => {
+        alert('Producto eliminado correctamente');
+        this.cargarProductos(); // Recargar la lista
+      },
+      error: (error) => {
+        alert(`Error al eliminar producto: ${error.message}`);
+        console.error('Error:', error);
+      }
+    });
   }
 }
