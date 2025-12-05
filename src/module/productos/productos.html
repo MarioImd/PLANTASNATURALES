@@ -8,6 +8,7 @@
       <p class="hero-subtitle">Conectando la naturaleza con tu bienestar</p>
       <div class="hero-decoration"></div>
       <div class="flex justify-end mb-6">
+          @if (isAdmin) {
         <button 
           pButton 
           label="Agregar Producto" 
@@ -15,7 +16,7 @@
           class="p-button-success"
           routerLink="/productos/agregar"
         ></button>
-        
+          }
       </div>
     </div>
   </section>
@@ -85,7 +86,9 @@
   
   <!-- Botón Editar (solo para admin) -->
   @if (isAdmin) {
-    <button 
+    <button
+      class="p-button-warning"
+      pButton 
       [routerLink]="['/productos/editar', item.id]"
       class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm"
     >
@@ -96,8 +99,10 @@
   <!-- Botón Eliminar (solo para admin) -->
   @if (isAdmin) {
     <button 
+    pButton
       (click)="confirmarEliminar(item)"
-      class="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 text-sm"
+       class="p-button-danger" 
+
     >
       Eliminar
     </button>
@@ -107,21 +112,26 @@
                       {{ formatearPrecio(item.price) }}
                     </span>
                     <div style="display: flex; flex-direction: row-reverse; gap: 0.5rem;">
-                      <button 
-                        pButton 
-                        icon="pi pi-heart" 
-                        [outlined]="true" 
-                        (click)="agregarAFavoritos(item.id)"
-                        class="p-button-outlined p-button-secondary"
-                      ></button>
-                      <button 
-                        pButton 
-                        icon="pi pi-shopping-cart" 
-                        label="Comprar Ahora"
-                        [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
-                        (click)="agregarAlCarrito(item.id)"
-                        class="p-button-primary"
-                      ></button>
+                 
+<!-- SOLUCIÓN: Solo verifica si tiene URL de mercado -->
+<a 
+    *ngIf="item.mercado"
+    [href]="item.mercado"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="p-button p-button-primary">
+    <i class="pi pi-shopping-cart mr-2"></i>
+    <span>Ir a Mercado Libre</span>
+</a>
+
+<button 
+    *ngIf="!item.mercado"
+    pButton 
+    icon="pi pi-exclamation-triangle" 
+    label="Sin enlace"
+    disabled
+    class="p-button-help">
+</button>
                     </div>
                   </div>
                 </div>

@@ -8,7 +8,7 @@
             </div>
         </div>
     </ng-template>
-
+    
     <ng-template #item let-item let-root="root">
         <a pRipple class="flex items-center p-menubar-item-link" [class.active-menu-item]="isActive(item.route)">
             <i *ngIf="item.icon" [class]="item.icon" class="menu-icon"></i>
@@ -18,11 +18,37 @@
     </ng-template>
 
     <ng-template #end>
-        <div class="navbar-end">
+        <div class="navbar-end d-flex align-items-center gap-3">
+            <!-- Botón de contacto -->
             <a routerLink="/contacto" class="contact-button">
                 <i class="pi pi-phone"></i>
                 <span>Contacto</span>
             </a>
+            
+            <!-- Sección de usuario/autenticación -->
+            <ng-container *ngIf="currentUser; else loginButton">
+                <!-- Avatar y nombre del usuario -->
+             
+                
+                <!-- Dropdown de usuario -->
+                <div class="dropdown">
+               
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            
+                        <li>
+                            <a class="dropdown-item text-danger"  class="contact-button" (click)="logout()">
+                                <i class="pi pi-sign-out me-2"></i>Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </ng-container>
+            
+            <ng-template #loginButton>
+                <a class="btn btn-outline-light btn-login" class="contact-button" routerLink="/login">
+                    <i class="pi pi-sign-in me-2"></i>Iniciar Sesión
+                </a>
+            </ng-template>
         </div>
     </ng-template>
 </p-menubar>

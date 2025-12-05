@@ -61,6 +61,9 @@ export class Productos implements OnInit {
       
       // Manejar diferentes formatos de respuesta
       let productosArray: any[] = [];
+
+      console.log('Respuesta completa de API:', response); // Para depuración
+      console.log('Tipo de respuesta:', typeof response); // Para depuración
       
       // Si es un array directamente
       if (Array.isArray(response)) {
@@ -176,6 +179,7 @@ export class Productos implements OnInit {
         price: precio,
         category: categoria,
         stock: stock,
+        mercado: producto.mercado || null,
         image: this.obtenerImagenPorCategoria(categoria),
         inventoryStatus: this.obtenerEstadoInventario(stock),
         rating: this.calcularRating(producto),
@@ -316,4 +320,5 @@ export class Productos implements OnInit {
       }
     });
   }
+  
 }

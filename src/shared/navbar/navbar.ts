@@ -5,6 +5,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
 import { RippleModule } from 'primeng/ripple';
+import { AuthService } from '../../services/auth/auth.services';
 
 @Component({
   selector: 'app-navbar',
@@ -21,8 +22,20 @@ import { RippleModule } from 'primeng/ripple';
   styleUrls: ['./navbar.css']
 })
 export class Navbar {
-  constructor(private router: Router) { }
+getInitials(arg0: any): string|undefined {
+throw new Error('Method not implemented.');
+}
+    currentUser: any = null;
+  isAdmin: boolean = false;
+  constructor(private router: Router,private authService: AuthService) { }
+  ngOnInit(): void {
+    // Suscribirse a los cambios del usuario
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
 
+ 
+  }
   items = [
     {
       label: 'Inicio',
@@ -93,5 +106,18 @@ export class Navbar {
 
   isActive(route: string): boolean {
     return this.router.url === route;
+  }
+
+    logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        console.log('Logout exitoso');
+        // La redirección ya se maneja en el servicio
+      },
+      error: (error) => {
+        console.error('Error en logout:', error);
+        // Si falla la llamada HTTP, hacer logout local
+      }
+    });
   }
 }
