@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +8,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { ProductoFormData } from '../../../util/productos.interfaces';
 import { ProductoService } from '../../../services/ProductosServices/productos.service';
@@ -22,23 +24,28 @@ import { ProductoService } from '../../../services/ProductosServices/productos.s
     ButtonModule,
     InputTextModule,
     InputNumberModule,
-    ToastModule
+    ToastModule,
+    FileUploadModule,
+    TooltipModule
   ],
   templateUrl: './agregar-producto.component.html',
   styleUrls: ['./agregar-producto.component.css'],
   providers: [MessageService]
 })
 export class AgregarProductoComponent implements OnInit {
+  @ViewChild('fileUpload') fileUpload!: FileUpload;
+  @ViewChild('productoForm') productoForm!: NgForm;
+
   producto: ProductoFormData = {
     nombre: '',
     descripcion: '',
     precio: 0,
-    categoria: '',    // ← CAMBIADO: 'tipo' por 'categoria'
+    categoria: '',
     stock: 0,
-    mercado: ''
+    mercado: '',
+    imagen: ''
   };
 
-  // Variable con el nombre CORRECTO (sin tilde si prefieres)
   categoriasDisponibles = [
     'Suplementos',
     'Tés e Infusiones', 
@@ -49,6 +56,11 @@ export class AgregarProductoComponent implements OnInit {
     'Otros'
   ];
 
+  // Variables para manejo de archivos
+  selectedFile: File | null = null;
+  imagePreview: string | ArrayBuffer | null = null;
+  isUploadingImage = false;
+  imageError: string | null = null;
   isLoading = false;
 
   constructor(
@@ -59,65 +71,156 @@ export class AgregarProductoComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onSubmit(): void {
-    // Validación básica - CAMBIADO: 'tipo' por 'categoria'
-    if (!this.producto.nombre || !this.producto.descripcion || !this.producto.categoria) {
+  // Manejar selección de archivo
+  onFileSelect(event: any): void {
+    console.log('📁 Archivo seleccionado:', event.files);
+    this.imageError = null;
+    
+    if (event.files && event.files.length > 0) {
+      const file = event.files[0];
+      
+      // Validar tipo de archivo
+      if (!file.type.match('image.*')) {
+        this.imageError = 'El archivo debe ser una imagen (JPG, PNG, GIF, etc.)';
+        this.clearFileUpload();
+        return;
+      }
+      
+      // Validar tamaño (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        this.imageError = 'La imagen no debe superar los 5MB';
+        this.clearFileUpload();
+        return;
+      }
+      
+      this.selectedFile = file;
+      
+      // Crear vista previa
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+      };
+      reader.readAsDataURL(file);
+      
       this.messageService.add({
-        severity: 'warn',
-        summary: 'Validación',
-        detail: 'Por favor complete todos los campos requeridos',
+        severity: 'info',
+        summary: 'Imagen seleccionada',
+        detail: `Archivo: ${file.name}`,
         life: 3000
       });
-      return;
     }
-
-    if (!this.validarFormulario()) {
-      return;
-    }
-
-    this.isLoading = true;
-    
-    this.productoService.addProducto(this.producto).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Producto agregado correctamente',
-          life: 3000
-        });
-        
-        // Limpiar formulario - CAMBIADO: 'tipo' por 'categoria'
-        this.producto = {
-          nombre: '',
-          descripcion: '',
-          precio: 0,
-          categoria: '',
-          stock: 0,
-          mercado: ''
-        };
-        
-        // Redirigir después de 2 segundos
-        setTimeout(() => {
-          this.router.navigate(['/productos']);
-        }, 2000);
-      },
-      error: (error: any) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.message || 'Error al agregar producto',
-          life: 5000
-        });
-        this.isLoading = false;
-      },
-      complete: () => {
-        this.isLoading = false;
-      }
-    });
   }
 
+  // Limpiar archivo seleccionado
+  onFileClear(): void {
+    this.selectedFile = null;
+    this.imagePreview = null;
+    this.imageError = null;
+  }
+
+  // Remover archivo seleccionado manualmente
+  removeSelectedFile(): void {
+    this.onFileClear();
+    if (this.fileUpload) {
+      this.fileUpload.clear();
+    }
+  }
+
+  // Enviar formulario - CORREGIDO
+ onSubmit(): void {
+  console.log('📤 Enviando formulario...');
+  
+  // Validación básica
+  if (!this.validarFormulario()) {
+    return;
+  }
+
+  this.isLoading = true;
+  
+  // Crear FormData para enviar al servidor
+  const formData = new FormData();
+  
+  // Agregar todos los campos del producto al FormData
+  formData.append('nombre', this.producto.nombre);
+  formData.append('descripcion', this.producto.descripcion);
+  formData.append('precio', this.producto.precio.toString());
+  formData.append('categoria', this.producto.categoria);
+  formData.append('stock', this.producto.stock.toString());
+  
+  // ✅ AGREGAR ESTA LÍNEA: Enviar estado como true
+  formData.append('estado', 'true');
+  
+  // Agregar mercado solo si tiene valor
+  if (this.producto.mercado && this.producto.mercado.trim() !== '') {
+    formData.append('mercado', this.producto.mercado);
+  }
+  
+  // Agregar la imagen si existe
+  if (this.selectedFile) {
+    console.log('📤 Agregando imagen al FormData:', this.selectedFile.name);
+    formData.append('imagen', this.selectedFile, this.selectedFile.name);
+  }
+  
+  // Mostrar en consola qué estamos enviando (para depuración)
+  console.log('📦 Datos a enviar:');
+  formData.forEach((value, key) => {
+    console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
+  });
+
+  // Llamar al servicio para agregar producto
+  this.productoService.addProductoFormData(formData).subscribe({
+    next: (response: any) => {
+      console.log('✅ Respuesta del servidor:', response);
+      
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: response.message || 'Producto agregado correctamente',
+        life: 3000
+      });
+      
+      // Limpiar formulario
+      this.resetForm();
+      
+      // Redirigir después de 2 segundos
+      setTimeout(() => {
+        this.router.navigate(['/productos']);
+      }, 2000);
+    },
+    error: (error: any) => {
+      console.error('❌ Error al agregar producto:', error);
+      
+      let errorMessage = 'Error al agregar producto';
+      
+      if (error.error && error.error.errors) {
+        // Mostrar errores específicos del backend
+        const errors = error.error.errors;
+        const errorDetails = Object.keys(errors)
+          .map(key => `${key}: ${errors[key]}`)
+          .join(', ');
+        errorMessage = `Errores de validación: ${errorDetails}`;
+      } else if (error.error && error.error.message) {
+        errorMessage = error.error.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: errorMessage,
+        life: 5000
+      });
+    },
+    complete: () => {
+      this.isLoading = false;
+    }
+  });
+}
   private validarFormulario(): boolean {
-    if (!this.producto.nombre.trim()) {
+    console.log('🔍 Validando formulario...');
+    
+    if (!this.producto.nombre || !this.producto.nombre.trim()) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
@@ -127,7 +230,7 @@ export class AgregarProductoComponent implements OnInit {
       return false;
     }
 
-    if (!this.producto.descripcion.trim()) {
+    if (!this.producto.descripcion || !this.producto.descripcion.trim()) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
@@ -149,8 +252,7 @@ export class AgregarProductoComponent implements OnInit {
       return false;
     }
 
-    // CAMBIADO: 'tipo' por 'categoria'
-    if (!this.producto.categoria.trim()) {
+    if (!this.producto.categoria || !this.producto.categoria.trim()) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
@@ -181,6 +283,31 @@ export class AgregarProductoComponent implements OnInit {
     }
 
     return true;
+  }
+
+  private clearFileUpload(): void {
+    this.selectedFile = null;
+    this.imagePreview = null;
+    if (this.fileUpload) {
+      this.fileUpload.clear();
+    }
+  }
+
+  private resetForm(): void {
+    this.producto = {
+      nombre: '',
+      descripcion: '',
+      precio: 0,
+      categoria: '',
+      stock: 0,
+      mercado: '',
+      imagen: ''
+    };
+    this.clearFileUpload();
+    this.imageError = null;
+    if (this.productoForm) {
+      this.productoForm.resetForm();
+    }
   }
 
   onCancel(): void {

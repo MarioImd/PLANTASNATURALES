@@ -5,11 +5,26 @@ import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { ConfirmationService, MessageService } from 'primeng/api';
 
-import { Producto } from '../../util/productos.interfaces';
+import { Producto } from '../../util/productos.interfaces'; // Tu interfaz
 import { ProductoService } from '../../services/ProductosServices/productos.service';
 import { AuthService } from '../../services/auth/auth.services';
+import { MessageService } from 'primeng/api';
+
+// Nueva interfaz para el producto mapeado para la vista
+interface ProductoVista {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  mercado: string | null;
+  image: string | null;
+  inventoryStatus: 'INSTOCK' | 'LOWSTOCK' | 'OUTOFSTOCK';
+  rating: number;
+  originalData: Producto;
+}
 
 @Component({
   selector: 'app-productos',
@@ -20,18 +35,18 @@ import { AuthService } from '../../services/auth/auth.services';
     DataViewModule, 
     TagModule,
     ToastModule,
-    
   ],
   templateUrl: './productos.html',
   styleUrl: './productos.css',
   providers: [MessageService]
 })
 export class Productos implements OnInit {
-  products = signal<any[]>([]);
-  productosOriginales: Producto[] = []; // Para guardar los datos originales
+  products = signal<ProductoVista[]>([]); // Cambiar a ProductoVista[]
+  productosOriginales: Producto[] = [];
   isLoading = true;
   error = signal<string | null>(null);
-  isAdmin = false; // Variable para controlar si es admin
+  isAdmin = false;
+  private apiBaseUrl = 'http://localhost:8000';
 
   constructor(
     private productoService: ProductoService,
@@ -40,9 +55,8 @@ export class Productos implements OnInit {
   ) {}
 
   ngOnInit(): void {
-       this.isAdmin = this.authService.isAdmin();
+    this.isAdmin = this.authService.isAdmin();
     
-    // Suscribirse a cambios (opcional)
     this.authService.isAdmin$.subscribe(isAdmin => {
       this.isAdmin = isAdmin;
     });
@@ -50,146 +64,173 @@ export class Productos implements OnInit {
     this.cargarProductos();
   }
 
-  cargarProductos(): void {
-  this.isLoading = true;
-  this.error.set(null);
-
-  this.productoService.getProductos().subscribe({
-    next: (response: any) => { // Usar 'any' temporalmente o el tipo correcto
-      console.log('Respuesta completa de API:', response); // Para depuración
-      console.log('Tipo de respuesta:', typeof response); // Para depuración
-      
-      // Manejar diferentes formatos de respuesta
-      let productosArray: any[] = [];
-
-      console.log('Respuesta completa de API:', response); // Para depuración
-      console.log('Tipo de respuesta:', typeof response); // Para depuración
-      
-      // Si es un array directamente
-      if (Array.isArray(response)) {
-        console.log('Respuesta es un array directo');
-        productosArray = response;
-      } 
-      // Si es un objeto con propiedad 'results' (paginación Django REST)
-      else if (response && typeof response === 'object' && response.results && Array.isArray(response.results)) {
-        console.log('Respuesta tiene propiedad results (paginación)');
-        productosArray = response.results;
-      } 
-      // Si es un objeto con propiedad 'data'
-      else if (response && typeof response === 'object' && response.data && Array.isArray(response.data)) {
-        console.log('Respuesta tiene propiedad data');
-        productosArray = response.data;
-      } 
-      // Si es un objeto con estructura de producto
-      else if (response && typeof response === 'object' && (response.id !== undefined || response.nombre !== undefined)) {
-        console.log('Respuesta es un solo producto');
-        productosArray = [response];
-      } 
-      // Si es un objeto pero no array (convertir valores)
-      else if (response && typeof response === 'object' && !Array.isArray(response)) {
-        console.log('Respuesta es un objeto, convirtiendo a array');
-        // Intentar extraer productos de diferentes maneras
-        const values = Object.values(response);
-        
-   
-        
-        if (productosArray.length === 0) {
-          // Si no encontramos productos, usar todos los valores
-          productosArray = values.filter(item => item !== null && item !== undefined);
-        }
-      }
-      // Si la respuesta es null/undefined o no es objeto/array
-      else if (response === null || response === undefined) {
-        console.log('Respuesta es null/undefined');
-        productosArray = [];
-      }
-      else {
-        console.error('Formato de respuesta no reconocido:', response);
-        this.error.set('Formato de datos no válido');
-        productosArray = [];
-      }
-
-      console.log('Productos extraídos:', productosArray); // Para depuración
-      console.log('Número de productos:', productosArray.length); // Para depuración
-      
-      // Guardar productos originales
-      this.productosOriginales = productosArray as Producto[];
-      
-      // Mapear productos para la vista
-      this.products.set(this.mapearProductosParaVista(productosArray));
-      this.isLoading = false;
-      
-      // Mostrar mensaje si no hay productos
-      if (productosArray.length === 0) {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Sin productos',
-          detail: 'No hay productos disponibles',
-          life: 3000
-        });
-      } else {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Productos cargados',
-          detail: `Se cargaron ${productosArray.length} productos`,
-          life: 3000
-        });
-      }
-    },
-    error: (err: any) => {
-      this.error.set('Error al cargar productos');
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudieron cargar los productos',
-        life: 5000
-      });
-      this.isLoading = false;
-      console.error('Error cargando productos:', err);
-    }
-  });
+  // Función para obtener imágenes
+ getProductImage(item: ProductoVista): string {
+  console.log('🔍 getProductImage llamado para:', item.name); // Depuración
+  
+  if (!item) {
+    console.warn('⚠️ Item es null/undefined');
+    return 'https://placehold.co/160x120/ef4444/ffffff?text=Error';
+  }
+  
+  // Depuración: ver qué datos tenemos
+  console.log('📦 Item completo:', item);
+  console.log('📷 Campo image:', item.image);
+  console.log('📦 OriginalData:', item.originalData);
+  console.log('📷 Imagen en originalData:', item.originalData?.imagen);
+  
+  // Opción 1: Usar el campo image del objeto mapeado
+  let imagenPath = item.image || null;
+  
+  // Opción 2: Si no está en item.image, buscar en originalData
+  if (!imagenPath && item.originalData) {
+    imagenPath = item.originalData.imagen || null;
+  }
+  
+  console.log('🔄 Ruta de imagen encontrada:', imagenPath);
+  
+  // Si no hay imagen, usar placeholder
+  if (!imagenPath || imagenPath.trim() === '') {
+    const nombreCorto = item.name ? item.name.substring(0, 10) : 'Producto';
+    console.log('📭 No hay imagen, usando placeholder para:', nombreCorto);
+    return `https://placehold.co/160x120/3b82f6/ffffff?text=${encodeURIComponent(nombreCorto)}`;
+  }
+  
+  // Construir URL completa
+  let finalUrl = '';
+  
+  if (imagenPath.startsWith('http')) {
+    finalUrl = imagenPath;
+  } else if (imagenPath.startsWith('/media/')) {
+    finalUrl = `${this.apiBaseUrl}${imagenPath}`;
+  } else if (!imagenPath.startsWith('/')) {
+    finalUrl = `${this.apiBaseUrl}/media/${imagenPath}`;
+  } else {
+    finalUrl = `${this.apiBaseUrl}${imagenPath}`;
+  }
+  
+  console.log('✅ URL final de imagen:', finalUrl);
+  return finalUrl;
 }
 
+  // Manejar error de carga de imagen
+  handleImageError(event: any, item: ProductoVista): void {
+    console.warn('Error cargando imagen para producto:', item.name);
+    event.target.src = 'https://placehold.co/160x120/d1d5db/374151?text=Sin+Imagen';
+    event.target.onerror = null;
+  }
+
+  cargarProductos(): void {
+    this.isLoading = true;
+    this.error.set(null);
+
+    this.productoService.getProductos().subscribe({
+      next: (response: any) => {
+        console.log('Respuesta de API:', response);
+        
+        let productosArray: Producto[] = [];
+
+        // Extraer array de productos según formato
+        if (Array.isArray(response)) {
+          productosArray = response;
+        } else if (response && typeof response === 'object') {
+          if (response.data && Array.isArray(response.data)) {
+            productosArray = response.data;
+          } else if (response.results && Array.isArray(response.results)) {
+            productosArray = response.results;
+          } else {
+            // Si la respuesta es un objeto con un array de productos
+            const data = response.data || response.results || response;
+            if (Array.isArray(data)) {
+              productosArray = data;
+            }
+          }
+        }
+
+        console.log('Productos extraídos:', productosArray);
+        
+        // Guardar productos originales (tipo Producto)
+        this.productosOriginales = productosArray;
+        
+        // Mapear productos para la vista
+        this.products.set(this.mapearProductosParaVista(productosArray));
+        this.isLoading = false;
+        
+        // Mensajes
+        if (productosArray.length === 0) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Sin productos',
+            detail: 'No hay productos disponibles',
+            life: 3000
+          });
+        } else {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Productos cargados',
+            detail: `Se cargaron ${productosArray.length} productos`,
+            life: 3000
+          });
+        }
+      },
+      error: (err: any) => {
+        this.error.set('Error al cargar productos');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar los productos',
+          life: 5000
+        });
+        this.isLoading = false;
+        console.error('Error cargando productos:', err);
+      }
+    });
+  }
+
   // Mapear productos de la API a la vista
-  private mapearProductosParaVista(productosApi: any[]): any[] {
+  private mapearProductosParaVista(productosApi: Producto[]): ProductoVista[] {
     if (!productosApi || !Array.isArray(productosApi)) {
-      console.error('productosApi no es un array:', productosApi);
       return [];
     }
     
-    return productosApi.map((producto, index) => {
-      // Proporcionar valores por defecto para evitar errores
-      const productoId = producto.id || producto.ID || index + 1;
-      const nombre = producto.nombre || producto.name || `Producto ${index + 1}`;
-      const descripcion = producto.descripcion || producto.description || 'Sin descripción';
+    return productosApi.map((producto: Producto, index: number) => {
+      // Ahora TypeScript sabe que 'producto' es de tipo Producto
+      const productoId = producto.id || index + 1;
+      const nombre = producto.nombre || `Producto ${index + 1}`;
+      const descripcion = producto.descripcion || 'Sin descripción';
       
       // Asegurar que precio sea un número
-      let precio = producto.precio || producto.price || 0;
-      if (typeof precio === 'string') {
-        precio = parseFloat(precio) || 0;
+      let precio: number;
+      if (typeof producto.precio === 'string') {
+        precio = parseFloat(producto.precio) || 0;
+      } else {
+        precio = producto.precio || 0;
       }
       
-      const categoria = producto.categoria || producto.category || 'General';
+      const categoria = producto.categoria || 'General';
       const stock = producto.stock || 0;
+      const imagen = producto.imagen || null;
+      const mercado = producto.mercado || null;
       
-      return {
+      const productoVista: ProductoVista = {
         id: productoId,
         name: nombre,
         description: descripcion,
         price: precio,
         category: categoria,
         stock: stock,
-        mercado: producto.mercado || null,
-        image: this.obtenerImagenPorCategoria(categoria),
+        mercado: mercado,
+        image: imagen,
         inventoryStatus: this.obtenerEstadoInventario(stock),
         rating: this.calcularRating(producto),
-        // Guardar datos originales por si se necesitan
         originalData: producto
       };
+      
+      return productoVista;
     });
   }
 
-  // Función para determinar el estado del inventario basado en el stock
+  // Resto de métodos con tipos correctos
   private obtenerEstadoInventario(stock: number): 'INSTOCK' | 'LOWSTOCK' | 'OUTOFSTOCK' {
     if (stock === undefined || stock === null) return 'OUTOFSTOCK';
     if (stock > 10) return 'INSTOCK';
@@ -197,57 +238,43 @@ export class Productos implements OnInit {
     return 'OUTOFSTOCK';
   }
 
-  // Función para obtener imagen según categoría
-  private obtenerImagenPorCategoria(categoria: string): string {
-    const imagenesPorCategoria: {[key: string]: string} = {
-      'Suplementos': 'bamboo-watch.jpg',
-      'Tés e Infusiones': 'black-watch.jpg',
-      'Aceites Esenciales': 'blue-band.jpg',
-      'Cuidado Personal': 'blue-t-shirt.jpg',
-      'Veterinaria': 'bracelet.jpg',
-      'Electrónica': 'brown-purse.jpg',
-      'Plantas Naturales': 'chakra-bracelet.jpg',
-      'Accesorios': 'galaxy-earrings.jpg',
-      'General': 'product-default.jpg',
-      'Planta': 'green-earbuds.jpg',
-      'Infusión': 'green-t-shirt.jpg'
-    };
-    
-    return imagenesPorCategoria[categoria] || 'product-default.jpg';
-  }
-
-  // Calcular rating
-  private calcularRating(producto: any): number {
-    // Puedes personalizar esta lógica
-    // Por ejemplo, si el producto tiene rating, usarlo
-    if (producto.rating !== undefined && producto.rating !== null) {
-      const ratingNum = parseFloat(producto.rating);
-      if (!isNaN(ratingNum) && ratingNum >= 0 && ratingNum <= 5) {
-        return ratingNum;
-      }
-    }
-    
-    // Si no, generar un rating aleatorio entre 3.5 y 5
+  private calcularRating(producto: Producto): number {
+    // Si el producto tuviera rating, lo usaríamos aquí
     return Math.random() * (5 - 3.5) + 3.5;
   }
 
-  // Método para determinar la severidad del tag según el estado del inventario
-  getSeverity(product: any): 'success' | 'warn' | 'danger' {
+  getSeverity(product: ProductoVista): 'success' | 'warn' | 'danger' {
     if (!product || !product.inventoryStatus) return 'success';
     
     switch (product.inventoryStatus) {
-      case 'INSTOCK':
-        return 'success';
-      case 'LOWSTOCK':
-        return 'warn';
-      case 'OUTOFSTOCK':
-        return 'danger';
-      default:
-        return 'success';
+      case 'INSTOCK': return 'success';
+      case 'LOWSTOCK': return 'warn';
+      case 'OUTOFSTOCK': return 'danger';
+      default: return 'success';
     }
   }
 
-  // Métodos para funcionalidades adicionales
+  formatearPrecio(precio: any): string {
+    if (precio === undefined || precio === null) {
+      return '$0.00';
+    }
+    
+    let precioNum: number;
+    if (typeof precio === 'string') {
+      precioNum = parseFloat(precio);
+      if (isNaN(precioNum)) {
+        return '$0.00';
+      }
+    } else if (typeof precio === 'number') {
+      precioNum = precio;
+    } else {
+      return '$0.00';
+    }
+    
+    return `$${precioNum.toFixed(2)}`;
+  }
+
+  // Métodos para acciones
   agregarAlCarrito(productId: number): void {
     this.messageService.add({
       severity: 'success',
@@ -266,36 +293,11 @@ export class Productos implements OnInit {
     });
   }
 
-  // Función para formatear el precio - CORREGIDA
-  formatearPrecio(precio: any): string {
-    if (precio === undefined || precio === null) {
-      return '$0.00';
-    }
-    
-    // Convertir a número si es string
-    let precioNum: number;
-    if (typeof precio === 'string') {
-      precioNum = parseFloat(precio);
-      if (isNaN(precioNum)) {
-        return '$0.00';
-      }
-    } else if (typeof precio === 'number') {
-      precioNum = precio;
-    } else {
-      return '$0.00';
-    }
-    
-    return `$${precioNum.toFixed(2)}`;
-  }
-
-  // Función para depurar - muestra los datos originales en consola
   mostrarDatosOriginales(): void {
     console.log('Productos originales:', this.productosOriginales);
     console.log('Productos mapeados:', this.products());
   }
 
-    // Método para confirmar eliminación
-  // Método para confirmar eliminación
   confirmarEliminar(producto: Producto): void {
     const confirmacion = window.confirm(
       `¿Estás seguro de que deseas eliminar el producto "${producto.nombre}"?\n\n` +
@@ -307,12 +309,11 @@ export class Productos implements OnInit {
     }
   }
   
-  // Método para eliminar el producto
   eliminarProducto(id: number): void {
     this.productoService.deleteProducto(id).subscribe({
       next: (response) => {
         alert('Producto eliminado correctamente');
-        this.cargarProductos(); // Recargar la lista
+        this.cargarProductos();
       },
       error: (error) => {
         alert(`Error al eliminar producto: ${error.message}`);
@@ -320,5 +321,4 @@ export class Productos implements OnInit {
       }
     });
   }
-  
 }

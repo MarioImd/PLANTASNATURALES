@@ -1,176 +1,266 @@
-<div class="container mx-auto p-6">
-  <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
-    <!-- Header -->
-    <div class="mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">Editar Producto</h2>
-      <p class="text-gray-600">Modifica la información del producto seleccionado</p>
+<div class="container mx-auto p-4">
+  <p-toast></p-toast>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoadingData" class="text-center py-8">
+    <div class="inline-block">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+      <p class="mt-2 text-gray-600">Cargando producto...</p>
     </div>
+  </div>
 
-    <!-- Formulario -->
-    <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" novalidate>
-      <!-- Campo Nombre -->
-      <div class="mb-4">
-        <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">
-          Nombre *
-        </label>
-        <input
-          type="text"
-          id="nombre"
-          formControlName="nombre"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Ingrese el nombre del producto"
-        />
-        <div *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched" 
-             class="mt-1 text-sm text-red-600">
-          El nombre es requerido (mínimo 2 caracteres)
+  <!-- Main Content -->
+  <div *ngIf="!isLoadingData">
+    <p-card header="Editar Producto" subheader="Modifica la información del producto seleccionado">
+      <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" novalidate enctype="multipart/form-data">
+        
+        <!-- Nombre del Producto -->
+        <div class="field mb-4">
+          <label for="nombre" class="block font-medium mb-2">
+            Nombre del Producto *
+          </label>
+          <input 
+            pInputText 
+            id="nombre" 
+            formControlName="nombre" 
+            class="w-full"
+            placeholder="Ingrese el nombre del producto"
+            [disabled]="isLoading"
+          />
+          <small *ngIf="nombre?.invalid && nombre?.touched" class="p-error block mt-1">
+            El nombre es requerido (mínimo 2 caracteres)
+          </small>
         </div>
-      </div>
 
-      <!-- Campo Descripción (Email) -->
-      <div class="mb-4">
-        <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1">
-          Email *
-        </label>
-        <input
-          type="email"
-          id="descripcion"
-          formControlName="descripcion"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          placeholder="ejemplo@dominio.com"
-        />
-        <div *ngIf="productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched" 
-             class="mt-1 text-sm text-red-600">
-          Ingrese un email válido
+        <!-- Email de Descripción -->
+        <div class="field mb-4">
+          <label for="descripcion" class="block font-medium mb-2">
+            Email de Descripción *
+          </label>
+          <input 
+            pInputText 
+            id="descripcion" 
+            formControlName="descripcion" 
+            type="email"
+            class="w-full"
+            placeholder="ejemplo@dominio.com"
+            [disabled]="isLoading"
+          />
+          <small *ngIf="descripcion?.invalid && descripcion?.touched" class="p-error block mt-1">
+            Ingrese un email válido
+          </small>
         </div>
-      </div>
 
-      <!-- Campo Precio -->
-      <div class="mb-4">
-        <label for="precio" class="block text-sm font-medium text-gray-700 mb-1">
-          Precio *
-        </label>
-        <div class="relative">
-          <span class="absolute left-3 top-2 text-gray-500">$</span>
-          <input
-            type="number"
-            id="precio"
-            formControlName="precio"
-            step="0.01"
-            min="0"
-            class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="0.00"
+        <!-- Precio -->
+        <div class="field mb-4">
+          <label for="precio" class="block font-medium mb-2">
+            Precio *
+          </label>
+          <p-inputNumber 
+            id="precio" 
+            formControlName="precio" 
+            mode="currency" 
+            currency="USD" 
+            locale="en-US"
+            class="w-full"
+            [disabled]="isLoading"
+          ></p-inputNumber>
+          <small *ngIf="precio?.invalid && precio?.touched" class="p-error block mt-1">
+            El precio debe ser mayor a 0
+          </small>
+        </div>
+
+        <!-- Categoría -->
+        <div class="field mb-4">
+          <label for="categoria" class="block font-medium mb-2">
+            Categoría *
+          </label>
+          <p-autocomplete
+            id="categoria"
+            formControlName="categoria"
+            [suggestions]="categoriasDisponibles"
+            placeholder="Seleccione una categoría"
+            [disabled]="isLoading"
+            class="w-full"
+          ></p-autocomplete>
+          <small *ngIf="categoria?.invalid && categoria?.touched" class="p-error block mt-1">
+            Seleccione una categoría
+          </small>
+        </div>
+
+        <!-- Stock -->
+        <div class="field mb-4">
+          <label for="stock" class="block font-medium mb-2">
+            Stock *
+          </label>
+          <p-inputNumber 
+            id="stock" 
+            formControlName="stock" 
+            class="w-full"
+            [disabled]="isLoading"
+          ></p-inputNumber>
+          <small *ngIf="stock?.invalid && stock?.touched" class="p-error block mt-1">
+            El stock no puede ser negativo
+          </small>
+        </div>
+
+        <!-- Mercado -->
+        <div class="field mb-4">
+          <label for="mercado" class="block font-medium mb-2">
+            Mercado
+          </label>
+          <input 
+            pInputText 
+            id="mercado" 
+            formControlName="mercado" 
+            class="w-full"
+            placeholder="Ej: https://www.mercadolibre.com/"
+            [disabled]="isLoading"
           />
         </div>
-        <div *ngIf="productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched" 
-             class="mt-1 text-sm text-red-600">
-          El precio debe ser mayor a 0
+
+        <!-- Estado -->
+        <div class="field mb-4">
+          <label for="estado" class="block font-medium mb-2">
+            Estado del Producto
+          </label>
+          
+          <p-toggleswitch  id="estado" 
+            formControlName="estado"
+            [disabled]="isLoading" />
+
+          <small class="block text-gray-600 mt-1">
+            {{ productoForm.get('estado')?.value ? 'Producto Activo' : 'Producto Inactivo' }}
+          </small>
+        </div>
+
+        <!-- Imagen -->
+        <div class="field mb-6">
+          <label class="block font-medium mb-2">
+            Imagen del Producto
+          </label>
+          
+          <!-- Imagen Actual -->
+          <div *ngIf="currentImageUrl" class="mb-3">
+            <p class="text-sm text-gray-600 mb-1">Imagen actual:</p>
+            <img 
+              [src]="currentImageUrl" 
+              alt="Imagen actual del producto"
+              class="w-48 h-48 object-cover rounded-lg border"
+              (error)="currentImageUrl = null"
+            />
+          </div>
+          
+          <!-- Input de Archivo -->
+          <div class="p-fileupload p-fileupload-basic" style="width: 100%">
+            <div class="p-fileupload-buttonbar">
+              <span class="p-button p-component p-fileupload-choose">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  (change)="onFileSelect($event)"
+                  class="p-fileupload-input"
+                  [disabled]="isLoading"
+                />
+                <span class="p-button-label">Seleccionar Imagen</span>
+              </span>
+            </div>
+            <small class="block text-gray-500 mt-1">
+              Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 5MB
+            </small>
+          </div>
+          
+          <!-- Vista Previa Nueva Imagen -->
+          <div *ngIf="imagePreview" class="mt-3">
+            <p class="text-sm text-gray-600 mb-1">Vista previa nueva imagen:</p>
+            <img 
+              [src]="imagePreview" 
+              alt="Vista previa nueva imagen"
+              class="w-48 h-48 object-cover rounded-lg border"
+            />
+            <button 
+              pButton 
+              type="button" 
+              icon="pi pi-times" 
+              label="Cancelar nueva imagen" 
+              class="p-button-text p-button-danger mt-2"
+              (click)="removeSelectedFile()"
+              [disabled]="isLoading"
+            ></button>
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end gap-2 pt-4 border-t">
+          <button 
+            pButton 
+            type="button" 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            class="p-button-outlined p-button-secondary"
+            (click)="onCancel()"
+            [disabled]="isLoading"
+          ></button>
+          
+          <button 
+            pButton 
+            type="submit" 
+            label="Guardar Cambios" 
+            icon="pi pi-check" 
+            class="p-button-success"
+            [disabled]="productoForm.invalid || isLoading"
+          >
+            <span *ngIf="isLoading" class="flex items-center">
+              <i class="pi pi-spin pi-spinner mr-2"></i>
+              Guardando...
+            </span>
+          </button>
+        </div>
+      </form>
+    </p-card>
+
+    <!-- Información del Producto -->
+    <p-panel header="Información del Producto" [toggleable]="true" class="mt-4" *ngIf="producto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex items-center">
+          <i class="pi pi-id-card text-blue-500 mr-2"></i>
+          <div>
+            <div class="text-sm text-gray-500">ID</div>
+            <div class="font-medium">{{ producto.id }}</div>
+          </div>
+        </div>
+        
+        <div class="flex items-center">
+          <i class="pi pi-check-circle mr-2" 
+             [ngClass]="producto.estado ? 'text-green-500' : 'text-red-500'"></i>
+          <div>
+            <div class="text-sm text-gray-500">Estado</div>
+            <div class="font-medium" [ngClass]="producto.estado ? 'text-green-600' : 'text-red-600'">
+              {{ producto.estado ? 'Activo' : 'Inactivo' }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-center">
+          <i class="pi pi-calendar-plus text-purple-500 mr-2"></i>
+          <div>
+            <div class="text-sm text-gray-500">Creado</div>
+            <div class="font-medium">{{ producto.creado | date:'medium' }}</div>
+          </div>
+        </div>
+        
+        <div class="flex items-center">
+          <i class="pi pi-calendar text-orange-500 mr-2"></i>
+          <div>
+            <div class="text-sm text-gray-500">Actualizado</div>
+            <div class="font-medium">{{ producto.actualizado | date:'medium' }}</div>
+          </div>
         </div>
       </div>
+    </p-panel>
 
-      <!-- Campo Categoría -->
-      <div class="mb-4">
-        <label for="categoria" class="block text-sm font-medium text-gray-700 mb-1">
-          Categoría *
-        </label>
-        <select
-          id="categoria"
-          formControlName="categoria"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-        >
-          <option value="">Seleccione una categoría</option>
-          <option value="Infusión">Infusión</option>
-          <option value="Té">Té</option>
-          <option value="Hierba">Hierba</option>
-          <option value="Especia">Especia</option>
-          <option value="Suplemento">Suplemento</option>
-        </select>
-        <div *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched" 
-             class="mt-1 text-sm text-red-600">
-          Seleccione una categoría
-        </div>
-      </div>
-
-      <!-- Campo Stock -->
-      <div class="mb-4">
-        <label for="stock" class="block text-sm font-medium text-gray-700 mb-1">
-          Stock *
-        </label>
-        <input
-          type="number"
-          id="stock"
-          formControlName="stock"
-          min="0"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          placeholder="0"
-        />
-        <div *ngIf="productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched" 
-             class="mt-1 text-sm text-red-600">
-          El stock no puede ser negativo
-        </div>
-      </div>
-
-      <!-- Campo Mercado -->
-      <div class="mb-6">
-        <label for="mercado" class="block text-sm font-medium text-gray-700 mb-1">
-          Mercado
-        </label>
-        <input
-          type="text"
-          id="mercado"
-          formControlName="mercado"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Ej: Mercado Central, Online, etc."
-        />
-      </div>
-
-      <!-- Botones de acción -->
-      <div class="flex justify-end space-x-4 pt-4 border-t">
-        <button
-          type="button"
-          (click)="onCancel()"
-          class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          [disabled]="productoForm.invalid || isLoading"
-          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span *ngIf="!isLoading">Guardar Cambios</span>
-          <span *ngIf="isLoading">Guardando...</span>
-        </button>
-      </div>
-    </form>
-
-    <!-- Mensajes de error/success -->
-    <div *ngIf="errorMessage" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-      <p class="text-red-700 text-sm">{{ errorMessage }}</p>
-    </div>
-
-    <!-- Información del producto -->
-    <div *ngIf="producto" class="mt-6 p-4 bg-gray-50 rounded-md">
-      <h3 class="text-sm font-medium text-gray-700 mb-2">Información del Producto</h3>
-      <div class="grid grid-cols-2 gap-2 text-sm">
-        <div>
-          <span class="font-medium text-gray-600">ID:</span>
-          <span class="ml-2">{{ producto.id }}</span>
-        </div>
-        <div>
-          <span class="font-medium text-gray-600">Estado:</span>
-          <span class="ml-2" [ngClass]="producto.estado ? 'text-green-600' : 'text-red-600'">
-            {{ producto.estado ? 'Activo' : 'Inactivo' }}
-          </span>
-        </div>
-        <div>
-          <span class="font-medium text-gray-600">Creado:</span>
-          <span class="ml-2">{{ producto.creado | date:'short' }}</span>
-        </div>
-        <div>
-          <span class="font-medium text-gray-600">Actualizado:</span>
-          <span class="ml-2">{{ producto.actualizado | date:'short' }}</span>
-        </div>
-      </div>
+    <!-- Mensaje de Error -->
+    <div *ngIf="errorMessage" class="mt-4">
     </div>
   </div>
 </div>

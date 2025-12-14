@@ -110,4 +110,39 @@ getProductos(): Observable<Producto[]> {
     console.error('Error en ProductoService:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }
+
+  // En productos.service.ts - agrega este método
+// En productos.service.ts
+addProductoFormData(formData: FormData): Observable<any> {
+  console.log('📤 Enviando FormData al servidor Django...');
+  
+  // Mostrar contenido del FormData (para depuración)
+  formData.forEach((value, key) => {
+    console.log(`📦 ${key}:`, value);
+  });
+  
+  return this.http.post(`${this.apiUrl}agregar/`, formData).pipe(
+    catchError(error => {
+      console.error('❌ Error en la solicitud:', error);
+      return throwError(() => error);
+    })
+  );
+}
+
+// En productos.service.ts - agregar este método
+updateProductoFormData(id: number, formData: FormData): Observable<any> {
+  console.log(`📤 Enviando actualización para producto ID: ${id}`);
+  
+  // Mostrar contenido del FormData
+  formData.forEach((value, key) => {
+    console.log(`📦 ${key}:`, value instanceof File ? `File: ${value.name}` : value);
+  });
+  
+  return this.http.put(`${this.apiUrl}editar/${id}/`, formData).pipe(
+    catchError(error => {
+      console.error('❌ Error al actualizar producto:', error);
+      return throwError(() => error);
+    })
+  );
+}
 }

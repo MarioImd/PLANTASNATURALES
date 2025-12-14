@@ -52,9 +52,12 @@
                 
                 <!-- Imagen del Producto -->
                 <div style="position: relative; width: 160px;">
-                  <img style="display: block; margin: 0 auto; border-radius: 6px; width: 100%;"
-                    [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
-                    [alt]="item.name" />
+                  <img 
+  [src]="getProductImage(item)"  
+  [alt]="item.name"
+  (error)="handleImageError($event, item)"  
+  style="width: 160px; height: 120px; object-fit: cover; border-radius: 8px;"
+/>
                   <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)"
                     style="position: absolute; left: 4px; top: 4px;" />
                 </div>
