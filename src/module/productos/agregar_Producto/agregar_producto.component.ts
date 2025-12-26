@@ -10,7 +10,11 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { TooltipModule } from 'primeng/tooltip';
-
+import { CardModule } from 'primeng/card';
+import { DividerModule } from 'primeng/divider';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ProductoFormData } from '../../../util/productos.interfaces';
 import { ProductoService } from '../../../services/ProductosServices/productos.service';
 
@@ -26,7 +30,13 @@ import { ProductoService } from '../../../services/ProductosServices/productos.s
     InputNumberModule,
     ToastModule,
     FileUploadModule,
-    TooltipModule
+    TooltipModule,
+    CardModule,
+    DividerModule,
+    FloatLabelModule,
+
+    InputGroupAddonModule,
+InputGroupModule
   ],
   templateUrl: './agregar-producto.component.html',
   styleUrls: ['./agregar-producto.component.css'],
@@ -47,13 +57,10 @@ export class AgregarProductoComponent implements OnInit {
   };
 
   categoriasDisponibles = [
-    'Suplementos',
-    'Tés e Infusiones', 
-    'Aceites Esenciales',
-    'Cuidado Personal',
+    'Corporal Cosmetico',
+    'Via oral (Capsulas y suplementos)',
     'Veterinaria',
-    'Electrónica',
-    'Otros'
+    
   ];
 
   // Variables para manejo de archivos
@@ -67,41 +74,41 @@ export class AgregarProductoComponent implements OnInit {
     private productoService: ProductoService,
     private messageService: MessageService,
     private router: Router
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   // Manejar selección de archivo
   onFileSelect(event: any): void {
     console.log('📁 Archivo seleccionado:', event.files);
     this.imageError = null;
-    
+
     if (event.files && event.files.length > 0) {
       const file = event.files[0];
-      
+
       // Validar tipo de archivo
       if (!file.type.match('image.*')) {
         this.imageError = 'El archivo debe ser una imagen (JPG, PNG, GIF, etc.)';
         this.clearFileUpload();
         return;
       }
-      
+
       // Validar tamaño (5MB máximo)
       if (file.size > 5 * 1024 * 1024) {
         this.imageError = 'La imagen no debe superar los 5MB';
         this.clearFileUpload();
         return;
       }
-      
+
       this.selectedFile = file;
-      
+
       // Crear vista previa
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result;
       };
       reader.readAsDataURL(file);
-      
+
       this.messageService.add({
         severity: 'info',
         summary: 'Imagen seleccionada',
@@ -127,99 +134,99 @@ export class AgregarProductoComponent implements OnInit {
   }
 
   // Enviar formulario - CORREGIDO
- onSubmit(): void {
-  console.log('📤 Enviando formulario...');
-  
-  // Validación básica
-  if (!this.validarFormulario()) {
-    return;
-  }
+  onSubmit(): void {
+    console.log('📤 Enviando formulario...');
 
-  this.isLoading = true;
-  
-  // Crear FormData para enviar al servidor
-  const formData = new FormData();
-  
-  // Agregar todos los campos del producto al FormData
-  formData.append('nombre', this.producto.nombre);
-  formData.append('descripcion', this.producto.descripcion);
-  formData.append('precio', this.producto.precio.toString());
-  formData.append('categoria', this.producto.categoria);
-  formData.append('stock', this.producto.stock.toString());
-  
-  // ✅ AGREGAR ESTA LÍNEA: Enviar estado como true
-  formData.append('estado', 'true');
-  
-  // Agregar mercado solo si tiene valor
-  if (this.producto.mercado && this.producto.mercado.trim() !== '') {
-    formData.append('mercado', this.producto.mercado);
-  }
-  
-  // Agregar la imagen si existe
-  if (this.selectedFile) {
-    console.log('📤 Agregando imagen al FormData:', this.selectedFile.name);
-    formData.append('imagen', this.selectedFile, this.selectedFile.name);
-  }
-  
-  // Mostrar en consola qué estamos enviando (para depuración)
-  console.log('📦 Datos a enviar:');
-  formData.forEach((value, key) => {
-    console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
-  });
-
-  // Llamar al servicio para agregar producto
-  this.productoService.addProductoFormData(formData).subscribe({
-    next: (response: any) => {
-      console.log('✅ Respuesta del servidor:', response);
-      
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Éxito',
-        detail: response.message || 'Producto agregado correctamente',
-        life: 3000
-      });
-      
-      // Limpiar formulario
-      this.resetForm();
-      
-      // Redirigir después de 2 segundos
-      setTimeout(() => {
-        this.router.navigate(['/productos']);
-      }, 2000);
-    },
-    error: (error: any) => {
-      console.error('❌ Error al agregar producto:', error);
-      
-      let errorMessage = 'Error al agregar producto';
-      
-      if (error.error && error.error.errors) {
-        // Mostrar errores específicos del backend
-        const errors = error.error.errors;
-        const errorDetails = Object.keys(errors)
-          .map(key => `${key}: ${errors[key]}`)
-          .join(', ');
-        errorMessage = `Errores de validación: ${errorDetails}`;
-      } else if (error.error && error.error.message) {
-        errorMessage = error.error.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-      
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: errorMessage,
-        life: 5000
-      });
-    },
-    complete: () => {
-      this.isLoading = false;
+    // Validación básica
+    if (!this.validarFormulario()) {
+      return;
     }
-  });
-}
+
+    this.isLoading = true;
+
+    // Crear FormData para enviar al servidor
+    const formData = new FormData();
+
+    // Agregar todos los campos del producto al FormData
+    formData.append('nombre', this.producto.nombre);
+    formData.append('descripcion', this.producto.descripcion);
+    formData.append('precio', this.producto.precio.toString());
+    formData.append('categoria', this.producto.categoria);
+    formData.append('stock', this.producto.stock.toString());
+
+    // ✅ AGREGAR ESTA LÍNEA: Enviar estado como true
+    formData.append('estado', 'true');
+
+    // Agregar mercado solo si tiene valor
+    if (this.producto.mercado && this.producto.mercado.trim() !== '') {
+      formData.append('mercado', this.producto.mercado);
+    }
+
+    // Agregar la imagen si existe
+    if (this.selectedFile) {
+      console.log('📤 Agregando imagen al FormData:', this.selectedFile.name);
+      formData.append('imagen', this.selectedFile, this.selectedFile.name);
+    }
+
+    // Mostrar en consola qué estamos enviando (para depuración)
+    console.log('📦 Datos a enviar:');
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
+    });
+
+    // Llamar al servicio para agregar producto
+    this.productoService.addProductoFormData(formData).subscribe({
+      next: (response: any) => {
+        console.log('✅ Respuesta del servidor:', response);
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: response.message || 'Producto agregado correctamente',
+          life: 3000
+        });
+
+        // Limpiar formulario
+        this.resetForm();
+
+        // Redirigir después de 2 segundos
+        setTimeout(() => {
+          this.router.navigate(['/productos']);
+        }, 2000);
+      },
+      error: (error: any) => {
+        console.error('❌ Error al agregar producto:', error);
+
+        let errorMessage = 'Error al agregar producto';
+
+        if (error.error && error.error.errors) {
+          // Mostrar errores específicos del backend
+          const errors = error.error.errors;
+          const errorDetails = Object.keys(errors)
+            .map(key => `${key}: ${errors[key]}`)
+            .join(', ');
+          errorMessage = `Errores de validación: ${errorDetails}`;
+        } else if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: errorMessage,
+          life: 5000
+        });
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+  }
   private validarFormulario(): boolean {
     console.log('🔍 Validando formulario...');
-    
+
     if (!this.producto.nombre || !this.producto.nombre.trim()) {
       this.messageService.add({
         severity: 'warn',
@@ -234,19 +241,18 @@ export class AgregarProductoComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
-        detail: 'El email de descripción es requerido',
+        detail: 'La descripción es requerida',
         life: 3000
       });
       return false;
     }
 
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.producto.descripcion)) {
+    // Validar longitud mínima de descripción
+    if (this.producto.descripcion.trim().length < 5) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
-        detail: 'La descripción debe ser un email válido',
+        detail: 'La descripción debe tener al menos 5 caracteres',
         life: 3000
       });
       return false;

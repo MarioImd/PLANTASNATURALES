@@ -18,6 +18,11 @@ import { PanelModule } from 'primeng/panel';
 import { FileUploadModule } from 'primeng/fileupload';  // Agregar para manejo de archivos
 import { MessageModule } from 'primeng/message';  // Para mensajes de error
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { DividerModule } from 'primeng/divider';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { FloatLabelModule } from 'primeng/floatlabel';
+
 
 @Component({
   selector: 'app-editar-producto',
@@ -29,7 +34,10 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     ButtonModule,
     InputTextModule,
     InputNumberModule,
-    
+    InputGroupModule,
+    InputGroupAddonModule,
+    FloatLabelModule,
+DividerModule,
     AutoCompleteModule,  // ✅ Aquí está el módulo correcto
     ToggleSwitchModule,
     ToastModule,
@@ -49,12 +57,12 @@ export class EditarProductoComponent implements OnInit {
   isLoadingData = false;
   errorMessage = '';
   productoId: number | null = null;
-  
+
   // Variables para manejo de imagen
   selectedFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   currentImageUrl: string | null = null;
-  
+
   // Categorías disponibles para el dropdown - VERSIÓN CORREGIDA
   categoriasDisponibles: any[] = [
     { label: 'Suplementos', value: 'Suplementos' },
@@ -76,7 +84,7 @@ export class EditarProductoComponent implements OnInit {
   ) {
     this.productoForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(2)]],
-      descripcion: ['', [Validators.required, Validators.email]],
+      descripcion: ['', [Validators.required, Validators.minLength(5)]],
       precio: [0, [Validators.required, Validators.min(0.01)]],
       categoria: [null, Validators.required],  // Cambiado a null para dropdown
       stock: [0, [Validators.required, Validators.min(0)]],
@@ -105,25 +113,30 @@ export class EditarProductoComponent implements OnInit {
   loadProducto(id: number): void {
     this.isLoadingData = true;
     this.errorMessage = '';
-    
+
     console.log('📥 Cargando producto con ID:', id);
-    
+
     this.productoService.getProductoById(id).subscribe({
-      next: (producto: Producto) => {
-        console.log('✅ Producto cargado:', producto);
+      next: (response: any) => {
+        console.log('✅ Respuesta del servidor:', response);
+
+        // Extraer el producto de la respuesta (puede venir en response.data o directamente)
+        const producto: Producto = response.data || response;
+        console.log('✅ Producto extraído:', producto);
+
         this.producto = producto;
-        
+
         // Mostrar la imagen actual si existe
         if (producto.imagen) {
           this.currentImageUrl = this.getProductImageUrl(producto.imagen);
           console.log('📷 URL de imagen actual:', this.currentImageUrl);
         }
-        
+
         // Encontrar el objeto categoría correspondiente
         const categoriaObj = this.categoriasDisponibles.find(
           cat => cat.value === producto.categoria || cat.label === producto.categoria
         );
-        
+
         // Actualizar formulario con datos del producto
         this.productoForm.patchValue({
           nombre: producto.nombre,
@@ -134,11 +147,12 @@ export class EditarProductoComponent implements OnInit {
           mercado: producto.mercado || '',
           estado: producto.estado
         });
-        
+
         console.log('📝 Formulario actualizado con valores:', this.productoForm.value);
-        
+        console.log('📝 Estado del formulario:', this.productoForm.status);
+
         this.isLoadingData = false;
-        
+
         this.messageService.add({
           severity: 'success',
           summary: 'Cargado',
@@ -150,7 +164,7 @@ export class EditarProductoComponent implements OnInit {
         console.error('❌ Error al cargar producto:', error);
         this.errorMessage = `Error al cargar el producto: ${error.message || 'Error desconocido'}`;
         this.isLoadingData = false;
-        
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -163,29 +177,31 @@ export class EditarProductoComponent implements OnInit {
 
   private getProductImageUrl(imagenPath: string): string {
     if (!imagenPath) return '';
-    
+
     if (imagenPath.startsWith('http')) {
       return imagenPath;
     }
-    
+
     if (imagenPath.startsWith('/media/')) {
       return `http://localhost:8000${imagenPath}`;
     }
-    
+
     if (!imagenPath.startsWith('/')) {
       return `http://localhost:8000/media/${imagenPath}`;
     }
-    
+
     return `http://localhost:8000${imagenPath}`;
   }
 
   onFileSelect(event: any): void {
     console.log('📁 Evento de selección de archivo:', event);
-    
-    if (event.files && event.files.length > 0) {
-      const file = event.files[0];
+
+    const files = event.target?.files || event.files;
+
+    if (files && files.length > 0) {
+      const file = files[0];
       console.log('📄 Archivo seleccionado:', file.name, file.type, file.size);
-      
+
       // Validar tipo de archivo
       if (!file.type.match('image.*')) {
         this.errorMessage = 'El archivo debe ser una imagen (JPG, PNG, GIF, etc.)';
@@ -197,7 +213,7 @@ export class EditarProductoComponent implements OnInit {
         });
         return;
       }
-      
+
       // Validar tamaño (5MB máximo)
       if (file.size > 5 * 1024 * 1024) {
         this.errorMessage = 'La imagen no debe superar los 5MB';
@@ -209,9 +225,9 @@ export class EditarProductoComponent implements OnInit {
         });
         return;
       }
-      
+
       this.selectedFile = file;
-      
+
       // Crear vista previa
       const reader = new FileReader();
       reader.onload = (e: any) => {
@@ -220,7 +236,7 @@ export class EditarProductoComponent implements OnInit {
         console.log('🖼️ Vista previa creada');
       };
       reader.readAsDataURL(file);
-      
+
       this.messageService.add({
         severity: 'info',
         summary: 'Imagen seleccionada',
@@ -234,7 +250,7 @@ export class EditarProductoComponent implements OnInit {
     console.log('🗑️ Removiendo archivo seleccionado');
     this.selectedFile = null;
     this.imagePreview = null;
-    
+
     // Restaurar imagen original si existe
     if (this.producto?.imagen) {
       this.currentImageUrl = this.getProductImageUrl(this.producto.imagen);
@@ -243,18 +259,18 @@ export class EditarProductoComponent implements OnInit {
 
   onSubmit(): void {
     console.log('📤 Enviando formulario...');
-    
+
     if (this.productoForm.invalid || !this.productoId) {
       console.log('❌ Formulario inválido o sin ID');
       this.productoForm.markAllAsTouched();
-      
+
       Object.keys(this.productoForm.controls).forEach(key => {
         const control = this.productoForm.get(key);
         if (control?.invalid) {
           console.log(`❌ Campo ${key} inválido:`, control.errors);
         }
       });
-      
+
       this.messageService.add({
         severity: 'warn',
         summary: 'Validación',
@@ -269,26 +285,26 @@ export class EditarProductoComponent implements OnInit {
 
     // Crear FormData para enviar al servidor
     const formData = new FormData();
-    
+
     // Agregar todos los campos del formulario
     const formValues = this.productoForm.value;
     console.log('📦 Valores del formulario:', formValues);
-    
+
     // Obtener el valor de categoría (puede ser objeto o string)
     const categoriaValue = formValues.categoria?.value || formValues.categoria;
-    
+
     formData.append('nombre', formValues.nombre);
     formData.append('descripcion', formValues.descripcion);
     formData.append('precio', formValues.precio.toString());
     formData.append('categoria', categoriaValue);
     formData.append('stock', formValues.stock.toString());
     formData.append('estado', formValues.estado.toString());
-    
+
     // Agregar mercado solo si tiene valor
     if (formValues.mercado && formValues.mercado.trim() !== '') {
       formData.append('mercado', formValues.mercado);
     }
-    
+
     // Agregar la imagen si se seleccionó una nueva
     if (this.selectedFile) {
       formData.append('imagen', this.selectedFile, this.selectedFile.name);
@@ -305,14 +321,14 @@ export class EditarProductoComponent implements OnInit {
       next: (response: any) => {
         console.log('✅ Producto actualizado:', response);
         this.isLoading = false;
-        
+
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
           detail: response.message || 'Producto actualizado correctamente',
           life: 3000
         });
-        
+
         setTimeout(() => {
           this.router.navigate(['/productos']);
         }, 1500);
@@ -320,9 +336,9 @@ export class EditarProductoComponent implements OnInit {
       error: (error: any) => {
         console.error('❌ Error al actualizar producto:', error);
         this.isLoading = false;
-        
+
         let errorMessage = `Error al actualizar el producto: ${error.message || 'Error desconocido'}`;
-        
+
         // Mostrar errores específicos del backend si existen
         if (error.error && error.error.errors) {
           const errors = error.error.errors;
@@ -333,9 +349,9 @@ export class EditarProductoComponent implements OnInit {
         } else if (error.error && error.error.message) {
           errorMessage = error.error.message;
         }
-        
+
         this.errorMessage = errorMessage;
-        
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',

@@ -1,6 +1,6 @@
 <div class="productos-container">
   <p-toast></p-toast>
-  
+
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-content">
@@ -8,15 +8,10 @@
       <p class="hero-subtitle">Conectando la naturaleza con tu bienestar</p>
       <div class="hero-decoration"></div>
       <div class="flex justify-end mb-6">
-          @if (isAdmin) {
-        <button 
-          pButton 
-          label="Agregar Producto" 
-          icon="pi pi-plus" 
-          class="p-button-success"
-          routerLink="/productos/agregar"
-        ></button>
-          }
+        @if (isAdmin) {
+        <button pButton label="Agregar Producto" icon="pi pi-plus" class="p-button-success"
+          routerLink="/productos/agregar"></button>
+        }
       </div>
     </div>
   </section>
@@ -27,6 +22,21 @@
     <p class="section-intro">
       Explora nuestro catálogo completo de productos naturales para tu bienestar
     </p>
+
+    <!-- Buscador de productos -->
+    <div class="search-container" style="max-width: 600px; margin: 2rem auto;">
+      <span class="p-input-icon-left w-full">
+        <i class="pi pi-search"></i>
+        <input type="text" pInputText [(ngModel)]="searchTerm" (input)="onSearch()"
+          placeholder="Buscar productos por nombre, descripción o categoría..." class="w-full"
+          style="padding-left: 2.5rem;" />
+      </span>
+      <small *ngIf="categoriaActual" class="block text-center mt-2 text-gray-600">
+        <i class="pi pi-filter"></i> Filtrando por categoría: <strong>{{ categoriaActual }}</strong>
+        <button pButton icon="pi pi-times" class="p-button-text p-button-sm ml-2" (click)="limpiarFiltros()"
+          label="Limpiar"></button>
+      </small>
+    </div>
 
     <!-- Estados de carga y error -->
     <div *ngIf="isLoading" class="loading-container">
@@ -47,24 +57,23 @@
         <ng-template #list let-items>
           <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
             <div *ngFor="let item of items; let first = first">
-              <div style="display: flex; flex-direction: column; padding: 1.5rem; gap: 1rem; border-top: 1px solid #dee2e6;"
+              <div
+                style="display: flex; flex-direction: column; padding: 1.5rem; gap: 1rem; border-top: 1px solid #dee2e6;"
                 [style.border-top]="first ? 'none' : '1px solid #dee2e6'">
-                
+
                 <!-- Imagen del Producto -->
                 <div style="position: relative; width: 160px;">
-                  <img 
-  [src]="getProductImage(item)"  
-  [alt]="item.name"
-  (error)="handleImageError($event, item)"  
-  style="width: 160px; height: 120px; object-fit: cover; border-radius: 8px;"
-/>
+                  <img [src]="getProductImage(item)" [alt]="item.name" (error)="handleImageError($event, item)"
+                    style="width: 160px; height: 120px; object-fit: cover; border-radius: 8px;" />
                   <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)"
                     style="position: absolute; left: 4px; top: 4px;" />
                 </div>
 
                 <!-- Información del Producto -->
-                <div style="display: flex; flex-direction: column; justify-content: space-between; flex: 1; gap: 1.5rem;">
-                  <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                <div
+                  style="display: flex; flex-direction: column; justify-content: space-between; flex: 1; gap: 1.5rem;">
+                  <div
+                    style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
                     <div>
                       <span style="font-weight: 500; color: #6c757d; font-size: 0.875rem;">{{ item.category }}</span>
                       <div style="font-size: 1.125rem; font-weight: 500; margin-top: 0.5rem;">
@@ -74,7 +83,8 @@
                         {{ item.description }}
                       </p>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border-radius: 1.5rem; background-color: #f8f9fa;">
+                    <div
+                      style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border-radius: 1.5rem; background-color: #f8f9fa;">
                       <span style="font-weight: 500; font-size: 0.875rem;">{{ item.rating.toFixed(1) }}</span>
                       <i class="pi pi-star-fill" style="color: #fbbf24;"></i>
                     </div>
@@ -83,58 +93,40 @@
                   <!-- Precio y Acciones -->
                   <div style="display: flex; flex-direction: column; gap: 2rem;">
                     <!-- En lista-productos.component.html -->
-<!-- En tu lista de productos, en la sección de cada producto -->
-<!-- En tu lista de productos -->
-<div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-  
-  <!-- Botón Editar (solo para admin) -->
-  @if (isAdmin) {
-    <button
-      class="p-button-warning"
-      pButton 
-      [routerLink]="['/productos/editar', item.id]"
-      class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm"
-    >
-      Editar
-    </button>
-  }
-  
-  <!-- Botón Eliminar (solo para admin) -->
-  @if (isAdmin) {
-    <button 
-    pButton
-      (click)="confirmarEliminar(item)"
-       class="p-button-danger" 
+                    <!-- En tu lista de productos, en la sección de cada producto -->
+                    <!-- En tu lista de productos -->
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
 
-    >
-      Eliminar
-    </button>
-  }
-</div>
+                      <!-- Botón Editar (solo para admin) -->
+                      @if (isAdmin) {
+                      <button class="p-button-warning" pButton [routerLink]="['/productos/editar', item.id]"
+                        class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm">
+                        Editar
+                      </button>
+                      }
+
+                      <!-- Botón Eliminar (solo para admin) -->
+                      @if (isAdmin) {
+                      <button pButton (click)="confirmarEliminar(item)" class="p-button-danger">
+                        Eliminar
+                      </button>
+                      }
+                    </div>
                     <span style="font-size: 1.25rem; font-weight: 600;">
                       {{ formatearPrecio(item.price) }}
                     </span>
                     <div style="display: flex; flex-direction: row-reverse; gap: 0.5rem;">
-                 
-<!-- SOLUCIÓN: Solo verifica si tiene URL de mercado -->
-<a 
-    *ngIf="item.mercado"
-    [href]="item.mercado"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="p-button p-button-primary">
-    <i class="pi pi-shopping-cart mr-2"></i>
-    <span>Ir a Mercado Libre</span>
-</a>
 
-<button 
-    *ngIf="!item.mercado"
-    pButton 
-    icon="pi pi-exclamation-triangle" 
-    label="Sin enlace"
-    disabled
-    class="p-button-help">
-</button>
+                      <!-- SOLUCIÓN: Solo verifica si tiene URL de mercado -->
+                      <a *ngIf="item.mercado" [href]="item.mercado" target="_blank" rel="noopener noreferrer"
+                        class="p-button p-button-primary">
+                        <i class="pi pi-shopping-cart mr-2"></i>
+                        <span>Ir a Mercado Libre</span>
+                      </a>
+
+                      <button *ngIf="!item.mercado" pButton icon="pi pi-exclamation-triangle" label="Sin enlace"
+                        disabled class="p-button-help">
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -160,13 +152,11 @@
         <i class="pi pi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
         <h3>No hay productos disponibles</h3>
         <p>No se encontraron productos en el catálogo.</p>
-        <button 
-          pButton 
-          label="Agregar Primer Producto" 
-          icon="pi pi-plus" 
-          class="p-button-success"
-          routerLink="/productos/agregar"
-        ></button>
+
+                @if (isAdmin) {
+        <button pButton label="Agregar Primer Producto" icon="pi pi-plus" class="p-button-success"
+          routerLink="/productos/agregar"></button>
+        }
       </div>
     </div>
   </section>

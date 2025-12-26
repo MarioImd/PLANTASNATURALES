@@ -1,10 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { InputTextModule } from 'primeng/inputtext';
 
 import { Producto } from '../../util/productos.interfaces'; // Tu interfaz
 import { ProductoService } from '../../services/ProductosServices/productos.service';
@@ -29,12 +31,14 @@ interface ProductoVista {
 @Component({
   selector: 'app-productos',
   imports: [
-    CommonModule, 
-    ButtonModule, 
-    RouterLink, 
-    DataViewModule, 
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    RouterLink,
+    DataViewModule,
     TagModule,
     ToastModule,
+    InputTextModule,
   ],
   templateUrl: './productos.html',
   styleUrl: './productos.css',
@@ -43,6 +47,9 @@ interface ProductoVista {
 export class Productos implements OnInit {
   products = signal<ProductoVista[]>([]); // Cambiar a ProductoVista[]
   productosOriginales: Producto[] = [];
+  productosFiltrados: ProductoVista[] = []; // Productos después de filtrar
+  categoriaActual: string | null = null; // Categoría seleccionada
+  searchTerm: string = ''; // Término de búsqueda
   isLoading = true;
   error = signal<string | null>(null);
   isAdmin = false;
@@ -51,67 +58,73 @@ export class Productos implements OnInit {
   constructor(
     private productoService: ProductoService,
     private messageService: MessageService,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
-    
+
     this.authService.isAdmin$.subscribe(isAdmin => {
       this.isAdmin = isAdmin;
     });
-    
-    this.cargarProductos();
+
+    // Suscribirse a cambios en los query params
+    this.route.queryParams.subscribe(params => {
+      this.categoriaActual = params['categoria'] || null;
+      console.log('📂 Categoría seleccionada:', this.categoriaActual);
+      this.cargarProductos();
+    });
   }
 
   // Función para obtener imágenes
- getProductImage(item: ProductoVista): string {
-  console.log('🔍 getProductImage llamado para:', item.name); // Depuración
-  
-  if (!item) {
-    console.warn('⚠️ Item es null/undefined');
-    return 'https://placehold.co/160x120/ef4444/ffffff?text=Error';
+  getProductImage(item: ProductoVista): string {
+    console.log('🔍 getProductImage llamado para:', item.name); // Depuración
+
+    if (!item) {
+      console.warn('⚠️ Item es null/undefined');
+      return 'https://placehold.co/160x120/ef4444/ffffff?text=Error';
+    }
+
+    // Depuración: ver qué datos tenemos
+    console.log('📦 Item completo:', item);
+    console.log('📷 Campo image:', item.image);
+    console.log('📦 OriginalData:', item.originalData);
+    console.log('📷 Imagen en originalData:', item.originalData?.imagen);
+
+    // Opción 1: Usar el campo image del objeto mapeado
+    let imagenPath = item.image || null;
+
+    // Opción 2: Si no está en item.image, buscar en originalData
+    if (!imagenPath && item.originalData) {
+      imagenPath = item.originalData.imagen || null;
+    }
+
+    console.log('🔄 Ruta de imagen encontrada:', imagenPath);
+
+    // Si no hay imagen, usar placeholder
+    if (!imagenPath || imagenPath.trim() === '') {
+      const nombreCorto = item.name ? item.name.substring(0, 10) : 'Producto';
+      console.log('📭 No hay imagen, usando placeholder para:', nombreCorto);
+      return `https://placehold.co/160x120/3b82f6/ffffff?text=${encodeURIComponent(nombreCorto)}`;
+    }
+
+    // Construir URL completa
+    let finalUrl = '';
+
+    if (imagenPath.startsWith('http')) {
+      finalUrl = imagenPath;
+    } else if (imagenPath.startsWith('/media/')) {
+      finalUrl = `${this.apiBaseUrl}${imagenPath}`;
+    } else if (!imagenPath.startsWith('/')) {
+      finalUrl = `${this.apiBaseUrl}/media/${imagenPath}`;
+    } else {
+      finalUrl = `${this.apiBaseUrl}${imagenPath}`;
+    }
+
+    console.log('✅ URL final de imagen:', finalUrl);
+    return finalUrl;
   }
-  
-  // Depuración: ver qué datos tenemos
-  console.log('📦 Item completo:', item);
-  console.log('📷 Campo image:', item.image);
-  console.log('📦 OriginalData:', item.originalData);
-  console.log('📷 Imagen en originalData:', item.originalData?.imagen);
-  
-  // Opción 1: Usar el campo image del objeto mapeado
-  let imagenPath = item.image || null;
-  
-  // Opción 2: Si no está en item.image, buscar en originalData
-  if (!imagenPath && item.originalData) {
-    imagenPath = item.originalData.imagen || null;
-  }
-  
-  console.log('🔄 Ruta de imagen encontrada:', imagenPath);
-  
-  // Si no hay imagen, usar placeholder
-  if (!imagenPath || imagenPath.trim() === '') {
-    const nombreCorto = item.name ? item.name.substring(0, 10) : 'Producto';
-    console.log('📭 No hay imagen, usando placeholder para:', nombreCorto);
-    return `https://placehold.co/160x120/3b82f6/ffffff?text=${encodeURIComponent(nombreCorto)}`;
-  }
-  
-  // Construir URL completa
-  let finalUrl = '';
-  
-  if (imagenPath.startsWith('http')) {
-    finalUrl = imagenPath;
-  } else if (imagenPath.startsWith('/media/')) {
-    finalUrl = `${this.apiBaseUrl}${imagenPath}`;
-  } else if (!imagenPath.startsWith('/')) {
-    finalUrl = `${this.apiBaseUrl}/media/${imagenPath}`;
-  } else {
-    finalUrl = `${this.apiBaseUrl}${imagenPath}`;
-  }
-  
-  console.log('✅ URL final de imagen:', finalUrl);
-  return finalUrl;
-}
 
   // Manejar error de carga de imagen
   handleImageError(event: any, item: ProductoVista): void {
@@ -127,7 +140,7 @@ export class Productos implements OnInit {
     this.productoService.getProductos().subscribe({
       next: (response: any) => {
         console.log('Respuesta de API:', response);
-        
+
         let productosArray: Producto[] = [];
 
         // Extraer array de productos según formato
@@ -148,14 +161,26 @@ export class Productos implements OnInit {
         }
 
         console.log('Productos extraídos:', productosArray);
-        
+
         // Guardar productos originales (tipo Producto)
         this.productosOriginales = productosArray;
-        
+
         // Mapear productos para la vista
-        this.products.set(this.mapearProductosParaVista(productosArray));
+        const productosMapeados = this.mapearProductosParaVista(productosArray);
+
+        // Filtrar por categoría si hay una seleccionada
+        if (this.categoriaActual) {
+          this.productosFiltrados = productosMapeados.filter(p =>
+            p.category.toLowerCase() === this.categoriaActual!.toLowerCase()
+          );
+          console.log(`🔍 Filtrando por categoría "${this.categoriaActual}": ${this.productosFiltrados.length} productos`);
+        } else {
+          this.productosFiltrados = productosMapeados;
+        }
+
+        this.products.set(this.productosFiltrados);
         this.isLoading = false;
-        
+
         // Mensajes
         if (productosArray.length === 0) {
           this.messageService.add({
@@ -187,18 +212,56 @@ export class Productos implements OnInit {
     });
   }
 
+  // Método para buscar productos
+  onSearch(): void {
+    console.log('🔍 Buscando:', this.searchTerm);
+
+    // Obtener todos los productos mapeados
+    const todosLosProductos = this.mapearProductosParaVista(this.productosOriginales);
+
+    let productosFiltrados = todosLosProductos;
+
+    // Filtrar por categoría si hay una seleccionada
+    if (this.categoriaActual) {
+      productosFiltrados = productosFiltrados.filter(p =>
+        p.category.toLowerCase() === this.categoriaActual!.toLowerCase()
+      );
+    }
+
+    // Filtrar por término de búsqueda
+    if (this.searchTerm && this.searchTerm.trim() !== '') {
+      const termino = this.searchTerm.toLowerCase().trim();
+      productosFiltrados = productosFiltrados.filter(p =>
+        p.name.toLowerCase().includes(termino) ||
+        p.description.toLowerCase().includes(termino) ||
+        p.category.toLowerCase().includes(termino)
+      );
+    }
+
+    this.productosFiltrados = productosFiltrados;
+    this.products.set(this.productosFiltrados);
+
+    console.log(`📊 Resultados: ${this.productosFiltrados.length} productos`);
+  }
+
+  // Método para limpiar filtros
+  limpiarFiltros(): void {
+    this.searchTerm = '';
+    this.categoriaActual = null;
+  }
+
   // Mapear productos de la API a la vista
   private mapearProductosParaVista(productosApi: Producto[]): ProductoVista[] {
     if (!productosApi || !Array.isArray(productosApi)) {
       return [];
     }
-    
+
     return productosApi.map((producto: Producto, index: number) => {
       // Ahora TypeScript sabe que 'producto' es de tipo Producto
       const productoId = producto.id || index + 1;
       const nombre = producto.nombre || `Producto ${index + 1}`;
       const descripcion = producto.descripcion || 'Sin descripción';
-      
+
       // Asegurar que precio sea un número
       let precio: number;
       if (typeof producto.precio === 'string') {
@@ -206,12 +269,12 @@ export class Productos implements OnInit {
       } else {
         precio = producto.precio || 0;
       }
-      
+
       const categoria = producto.categoria || 'General';
       const stock = producto.stock || 0;
       const imagen = producto.imagen || null;
       const mercado = producto.mercado || null;
-      
+
       const productoVista: ProductoVista = {
         id: productoId,
         name: nombre,
@@ -225,7 +288,7 @@ export class Productos implements OnInit {
         rating: this.calcularRating(producto),
         originalData: producto
       };
-      
+
       return productoVista;
     });
   }
@@ -245,7 +308,7 @@ export class Productos implements OnInit {
 
   getSeverity(product: ProductoVista): 'success' | 'warn' | 'danger' {
     if (!product || !product.inventoryStatus) return 'success';
-    
+
     switch (product.inventoryStatus) {
       case 'INSTOCK': return 'success';
       case 'LOWSTOCK': return 'warn';
@@ -258,7 +321,7 @@ export class Productos implements OnInit {
     if (precio === undefined || precio === null) {
       return '$0.00';
     }
-    
+
     let precioNum: number;
     if (typeof precio === 'string') {
       precioNum = parseFloat(precio);
@@ -270,7 +333,7 @@ export class Productos implements OnInit {
     } else {
       return '$0.00';
     }
-    
+
     return `$${precioNum.toFixed(2)}`;
   }
 
@@ -303,12 +366,12 @@ export class Productos implements OnInit {
       `¿Estás seguro de que deseas eliminar el producto "${producto.nombre}"?\n\n` +
       'Esta acción cambiará el estado del producto a inactivo.'
     );
-    
+
     if (confirmacion) {
       this.eliminarProducto(producto.id);
     }
   }
-  
+
   eliminarProducto(id: number): void {
     this.productoService.deleteProducto(id).subscribe({
       next: (response) => {

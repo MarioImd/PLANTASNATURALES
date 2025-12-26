@@ -22,19 +22,19 @@ import { AuthService } from '../../services/auth/auth.services';
   styleUrls: ['./navbar.css']
 })
 export class Navbar {
-getInitials(arg0: any): string|undefined {
-throw new Error('Method not implemented.');
-}
-    currentUser: any = null;
+  getInitials(arg0: any): string | undefined {
+    throw new Error('Method not implemented.');
+  }
+  currentUser: any = null;
   isAdmin: boolean = false;
-  constructor(private router: Router,private authService: AuthService) { }
+  constructor(private router: Router, private authService: AuthService) { }
   ngOnInit(): void {
     // Suscribirse a los cambios del usuario
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
 
- 
+
   }
   items = [
     {
@@ -61,27 +61,27 @@ throw new Error('Method not implemented.');
           separator: true
         },
         {
-          label: 'Plantas Naturales',
+          label: 'Corporal Cosmetico',
           icon: 'pi pi-sun',
-          route: '/plantas',
+          route: '/productos',
           command: () => {
-            this.router.navigate(['/plantas']);
+            this.router.navigate(['/productos'], { queryParams: { categoria: 'Corporal Cosmetico' } });
           }
         },
         {
-          label: 'Accesorios',
+          label: 'Capsulas',
           icon: 'pi pi-box',
-          route: '/accesorios',
+          route: '/productos',
           command: () => {
-            this.router.navigate(['/accesorios']);
+            this.router.navigate(['/productos'], { queryParams: { categoria: 'Capsulas' } });
           }
         },
         {
           label: 'Veterinaria',
           icon: 'pi pi-heart',
-          route: '/veterinaria',
+          route: '/productos',
           command: () => {
-            this.router.navigate(['/veterinaria']);
+            this.router.navigate(['/productos'], { queryParams: { categoria: 'Veterinaria' } });
           }
         }
       ]
@@ -108,7 +108,7 @@ throw new Error('Method not implemented.');
     return this.router.url === route;
   }
 
-    logout(): void {
+  logout(): void {
     this.authService.logout().subscribe({
       next: () => {
         console.log('Logout exitoso');
