@@ -6,6 +6,7 @@ import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
 import { RippleModule } from 'primeng/ripple';
 import { AuthService } from '../../services/auth/auth.services';
+import { ThemeService } from '../../services/theme/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -27,14 +28,23 @@ export class Navbar {
   }
   currentUser: any = null;
   isAdmin: boolean = false;
-  constructor(private router: Router, private authService: AuthService) { }
+  isDarkMode: boolean = false;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private themeService: ThemeService
+  ) { }
   ngOnInit(): void {
     // Suscribirse a los cambios del usuario
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
 
-
+    // Suscribirse a los cambios del tema
+    this.themeService.darkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
   }
   items = [
     {
@@ -106,6 +116,10 @@ export class Navbar {
 
   isActive(route: string): boolean {
     return this.router.url === route;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   logout(): void {

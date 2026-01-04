@@ -1,11 +1,11 @@
 .contact-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
 }
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
     padding: 80px 20px;
     text-align: center;
     position: relative;
@@ -46,7 +46,7 @@
 .hero-title {
     font-size: 3.5rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-white);
     margin-bottom: 15px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     animation: fadeInDown 0.8s ease-out;
@@ -62,7 +62,7 @@
 .hero-decoration {
     width: 80px;
     height: 4px;
-    background: white;
+    background: var(--text-white);
     margin: 0 auto;
     border-radius: 2px;
     animation: scaleIn 0.6s ease-out 0.4s backwards;
@@ -78,14 +78,14 @@
 .section-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #2e7d32;
+    color: var(--text-primary);
     text-align: center;
     margin-bottom: 15px;
 }
 
 .section-description {
     font-size: 1.1rem;
-    color: #666;
+    color: var(--text-secondary);
     text-align: center;
     margin-bottom: 50px;
 }
@@ -100,10 +100,10 @@
 /* Email Cards */
 .email-card {
     position: relative;
-    background: white;
+    background: var(--bg-card);
     border-radius: 24px;
     padding: 40px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     animation: fadeInUp 0.6s ease-out backwards;
@@ -111,7 +111,7 @@
 
 .email-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-lg);
 }
 
 .facturacion-card {
@@ -147,13 +147,13 @@
 .email-icon {
     width: 70px;
     height: 70px;
-    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 25px;
-    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+    box-shadow: var(--shadow-green);
     transition: all 0.3s ease;
 }
 
@@ -165,21 +165,21 @@
 .email-icon svg {
     width: 35px;
     height: 35px;
-    color: white;
+    color: var(--text-white);
 }
 
 /* Email Title */
 .email-title {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #2e7d32;
+    color: var(--text-primary);
     margin-bottom: 15px;
 }
 
 /* Email Description */
 .email-description {
     font-size: 1rem;
-    color: #666;
+    color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 25px;
 }
@@ -189,7 +189,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+    background: linear-gradient(135deg, var(--bg-light-green) 0%, var(--bg-gradient-end) 100%);
     padding: 18px 20px;
     border-radius: 12px;
     margin-bottom: 25px;
@@ -198,27 +198,27 @@
 }
 
 .email-address-container:hover {
-    border-color: #4caf50;
-    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+    border-color: var(--primary-green-light);
+    background: linear-gradient(135deg, var(--bg-gradient-end) 0%, var(--bg-light-green) 100%);
 }
 
 .email-address {
     flex: 1;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #2e7d32;
+    color: var(--text-primary);
     text-decoration: none;
     transition: color 0.3s ease;
     word-break: break-all;
 }
 
 .email-address:hover {
-    color: #1b5e20;
+    color: var(--primary-green-dark);
 }
 
 /* Copy Button */
 .copy-button {
-    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
     border: none;
     border-radius: 8px;
     width: 40px;
@@ -228,7 +228,7 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    box-shadow: var(--shadow-green);
 }
 
 .copy-button:hover {
@@ -243,7 +243,7 @@
 .copy-button svg {
     width: 20px;
     height: 20px;
-    color: white;
+    color: var(--text-white);
 }
 
 /* Card Tags */
@@ -254,8 +254,8 @@
 }
 
 .tag {
-    background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
-    color: #2e7d32;
+    background: linear-gradient(135deg, var(--bg-light-green) 0%, var(--bg-gradient-end) 100%);
+    color: var(--text-primary);
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.9rem;
@@ -265,8 +265,8 @@
 }
 
 .tag:hover {
-    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
+    color: var(--text-white);
     border-color: transparent;
     transform: translateY(-2px);
 }
@@ -274,7 +274,7 @@
 /* Info Section */
 .info-section {
     padding: 60px 20px;
-    background: white;
+    background: var(--bg-white);
 }
 
 .info-grid {
@@ -288,7 +288,7 @@
 .info-card {
     text-align: center;
     padding: 35px 25px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
     border-radius: 16px;
     transition: all 0.3s ease;
     animation: fadeInUp 0.6s ease-out backwards;
@@ -308,7 +308,7 @@
 
 .info-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
 }
 
 .info-icon {
@@ -319,24 +319,24 @@
 .info-card h3 {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #2e7d32;
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
 .info-card p {
     font-size: 1rem;
-    color: #666;
+    color: var(--text-secondary);
     line-height: 1.6;
 }
 
 .info-card strong {
-    color: #2e7d32;
+    color: var(--text-primary);
     font-weight: 600;
 }
 
 /* CTA Section */
 .cta-section {
-    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
     padding: 80px 20px;
     text-align: center;
     position: relative;
@@ -358,7 +358,7 @@
 .cta-section h2 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-white);
     margin-bottom: 15px;
     position: relative;
     z-index: 1;
@@ -383,8 +383,8 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: white;
-    color: #2e7d32;
+    background: var(--bg-card);
+    color: var(--primary-green);
     padding: 16px 40px;
     border-radius: 50px;
     font-size: 1.1rem;
@@ -399,7 +399,7 @@
 .cta-email-link:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-    background: #f1f8f4;
+    background: var(--bg-light-green);
 }
 
 .email-icon-small {
