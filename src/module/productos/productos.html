@@ -23,21 +23,6 @@
       Explora nuestro catálogo completo de productos naturales para tu bienestar
     </p>
 
-    <!-- Buscador de productos -->
-    <div class="search-container" style="max-width: 600px; margin: 2rem auto;">
-      <span class="p-input-icon-left w-full">
-        <i class="pi pi-search"></i>
-        <input type="text" pInputText [(ngModel)]="searchTerm" (input)="onSearch()"
-          placeholder="Buscar productos por nombre, descripción o categoría..." class="w-full"
-          style="padding-left: 2.5rem;" />
-      </span>
-      <small *ngIf="categoriaActual" class="block text-center mt-2 text-gray-600">
-        <i class="pi pi-filter"></i> Filtrando por categoría: <strong>{{ categoriaActual }}</strong>
-        <button pButton icon="pi pi-times" class="p-button-text p-button-sm ml-2" (click)="limpiarFiltros()"
-          label="Limpiar"></button>
-      </small>
-    </div>
-
     <!-- Estados de carga y error -->
     <div *ngIf="isLoading" class="loading-container">
       <div class="loading-spinner">
@@ -152,11 +137,8 @@
         <i class="pi pi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
         <h3>No hay productos disponibles</h3>
         <p>No se encontraron productos en el catálogo.</p>
-
-                @if (isAdmin) {
         <button pButton label="Agregar Primer Producto" icon="pi pi-plus" class="p-button-success"
           routerLink="/productos/agregar"></button>
-        }
       </div>
     </div>
   </section>
