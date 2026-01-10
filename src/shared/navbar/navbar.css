@@ -51,6 +51,69 @@
     letter-spacing: 0.5px;
 }
 
+/* Dark Mode Toggle Button */
+.theme-toggle-button {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--primary-green);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.theme-toggle-button:hover {
+    background: var(--bg-light-green);
+    border-color: var(--primary-green);
+    transform: scale(1.1);
+}
+
+.theme-toggle-button i {
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle-button:hover i {
+    transform: rotate(20deg);
+}
+
+/* Dark Mode Navbar Styles */
+[data-theme="dark"] .navbar-brand:hover {
+    background: rgba(102, 187, 106, 0.1);
+}
+
+[data-theme="dark"] .brand-name {
+    color: var(--primary-green);
+}
+
+[data-theme="dark"] .brand-tagline {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .menu-icon {
+    color: var(--primary-green);
+}
+
+[data-theme="dark"] .menu-label {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .contact-button {
+    background: var(--bg-card);
+    color: var(--primary-green);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .contact-button:hover {
+    background: var(--primary-green);
+    color: white;
+}
+
+
 /* Menu Items */
 .menu-icon {
     color: #2e7d32;

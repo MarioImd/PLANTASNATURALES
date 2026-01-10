@@ -1,11 +1,11 @@
 .puntos-venta-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
 }
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
     padding: 80px 20px;
     text-align: center;
     position: relative;
@@ -46,7 +46,7 @@
 .hero-title {
     font-size: 3.5rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-white);
     margin-bottom: 15px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     animation: fadeInDown 0.8s ease-out;
@@ -62,7 +62,7 @@
 .hero-decoration {
     width: 80px;
     height: 4px;
-    background: white;
+    background: var(--text-white);
     margin: 0 auto;
     border-radius: 2px;
     animation: scaleIn 0.6s ease-out 0.4s backwards;
@@ -71,13 +71,13 @@
 /* Locations Section */
 .locations-section {
     padding: 80px 20px;
-    background-color: #ffffff;
+    background-color: var(--bg-white);
 }
 
 .section-title {
     text-align: center;
     font-size: 2.5rem;
-    color: #2e7d32;
+    color: var(--text-primary);
     margin-bottom: 50px;
     font-weight: 700;
 }
@@ -91,12 +91,12 @@
 }
 
 .location-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 24px;
     padding: 30px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-left: 4px solid #4caf50;
+    border-left: 4px solid var(--primary-green-light);
     position: relative;
     overflow: hidden;
 }
@@ -115,7 +115,7 @@
 
 .location-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-lg);
 }
 
 .location-card:hover::before {
@@ -128,21 +128,21 @@
 }
 
 .location-card h3 {
-    color: #2e7d32;
+    color: var(--text-primary);
     font-size: 1.6rem;
     margin-bottom: 20px;
     font-weight: 700;
 }
 
 .location-details p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.95rem;
     line-height: 1.7;
     margin-bottom: 12px;
 }
 
 .location-details strong {
-    color: #2e7d32;
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -160,14 +160,14 @@
 /* Online Section */
 .online-section {
     padding: 80px 20px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
 }
 
 .online-intro {
     text-align: center;
     max-width: 700px;
     margin: 0 auto 50px;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 1.1rem;
     line-height: 1.7;
 }
@@ -181,17 +181,17 @@
 }
 
 .online-card {
-    background: white;
+    background: var(--bg-card);
     padding: 40px 30px;
     border-radius: 24px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
 }
 
 .online-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-lg);
 }
 
 .online-icon {
@@ -200,14 +200,14 @@
 }
 
 .online-card h3 {
-    color: #2e7d32;
+    color: var(--text-primary);
     font-size: 1.4rem;
     margin-bottom: 15px;
     font-weight: 700;
 }
 
 .online-card p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 1rem;
     line-height: 1.6;
     margin-bottom: 25px;
@@ -215,8 +215,8 @@
 
 .online-button {
     display: inline-block;
-    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
+    color: var(--text-white);
     padding: 14px 32px;
     font-size: 1rem;
     font-weight: 600;
@@ -225,19 +225,19 @@
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    box-shadow: var(--shadow-green);
 }
 
 .online-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
-    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    background: linear-gradient(135deg, var(--primary-green-dark) 0%, var(--primary-green) 100%);
 }
 
 /* Info Section */
 .info-section {
     padding: 80px 20px;
-    background-color: #ffffff;
+    background-color: var(--bg-white);
 }
 
 .info-content {
@@ -253,7 +253,7 @@
 }
 
 .info-item {
-    background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+    background: linear-gradient(135deg, var(--bg-light-green) 0%, var(--bg-gradient-end) 100%);
     padding: 35px 25px;
     border-radius: 16px;
     text-align: center;
@@ -262,7 +262,7 @@
 
 .info-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
 }
 
 .info-icon {
@@ -271,21 +271,21 @@
 }
 
 .info-item h3 {
-    color: #2e7d32;
+    color: var(--text-primary);
     font-size: 1.3rem;
     margin-bottom: 12px;
     font-weight: 700;
 }
 
 .info-item p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.95rem;
     line-height: 1.6;
 }
 
 /* CTA Section */
 .cta-section {
-    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
     padding: 80px 20px;
     text-align: center;
     position: relative;
@@ -307,7 +307,7 @@
 .cta-section h2 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-white);
     margin-bottom: 15px;
     position: relative;
     z-index: 1;
@@ -323,8 +323,8 @@
 
 .cta-button {
     display: inline-block;
-    background: white;
-    color: #2e7d32;
+    background: var(--bg-card);
+    color: var(--primary-green);
     padding: 16px 40px;
     border-radius: 50px;
     font-size: 1.1rem;
@@ -339,7 +339,7 @@
 .cta-button:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-    background: #f1f8f4;
+    background: var(--bg-light-green);
 }
 
 /* Responsive Design */

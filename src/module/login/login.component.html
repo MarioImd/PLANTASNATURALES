@@ -1,67 +1,70 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8">
-    <div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        Iniciar Sesión
-      </h2>
-      <p class="mt-2 text-center text-sm text-gray-600">
-        Sistema de Productos Pronathom®
-      </p>
+<div class="login-container">
+  <!-- Hero Section -->
+  <section class="login-hero-section">
+    <div class="hero-content">
+      <div class="brand-logo">🌿</div>
+      <h1 class="hero-title">Bienvenido</h1>
+      <p class="hero-subtitle">Sistema de Productos Pronathom®</p>
+      <div class="hero-decoration"></div>
     </div>
-    
-    <form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="rounded-md shadow-sm -space-y-px">
-        <div>
-          <label for="username" class="sr-only">Usuario</label>
-          <input 
-            id="username" 
-            type="text" 
-            formControlName="username"
-            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-            placeholder="Usuario"
-          >
-          @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
-            <div class="text-red-500 text-xs mt-1">
-              El usuario es requerido
-            </div>
-          }
-        </div>
-        <div>
-          <label for="password" class="sr-only">Contraseña</label>
-          <input 
-            id="password" 
-            type="password" 
-            formControlName="password"
-            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-            placeholder="Contraseña"
-          >
-          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-            <div class="text-red-500 text-xs mt-1">
-              La contraseña es requerida (mínimo 4 caracteres)
-            </div>
-          }
-        </div>
+  </section>
+
+  <!-- Login Form Section -->
+  <section class="login-form-section">
+    <div class="login-card">
+      <div class="card-header">
+        <h2>Iniciar Sesión</h2>
+        <p>Ingresa tus credenciales para acceder al sistema</p>
       </div>
 
-      @if (errorMessage) {
-        <div class="text-red-600 text-sm text-center">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <div class="input-wrapper">
+            <i class="pi pi-user input-icon"></i>
+            <input id="username" type="text" formControlName="username" class="form-input"
+              placeholder="Ingresa tu usuario">
+          </div>
+          @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+          <div class="error-message">
+            <i class="pi pi-exclamation-circle"></i>
+            El usuario es requerido
+          </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="input-wrapper">
+            <i class="pi pi-lock input-icon"></i>
+            <input id="password" type="password" formControlName="password" class="form-input"
+              placeholder="Ingresa tu contraseña">
+          </div>
+          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <div class="error-message">
+            <i class="pi pi-exclamation-circle"></i>
+            La contraseña es requerida (mínimo 4 caracteres)
+          </div>
+          }
+        </div>
+
+        @if (errorMessage) {
+        <div class="alert-error">
+          <i class="pi pi-times-circle"></i>
           {{ errorMessage }}
         </div>
-      }
+        }
 
-      <div>
-        <button 
-          type="submit" 
-          [disabled]="loginForm.invalid || isLoading"
-          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-        >
+        <button type="submit" [disabled]="loginForm.invalid || isLoading" class="login-button">
           @if (isLoading) {
-            <span>Iniciando sesión...</span>
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Iniciando sesión...</span>
           } @else {
-            <span>Iniciar Sesión</span>
+          <i class="pi pi-sign-in"></i>
+          <span>Iniciar Sesión</span>
           }
         </button>
-      </div>
-    </form>
-  </div>
+      </form>
+    </div>
+  </section>
 </div>

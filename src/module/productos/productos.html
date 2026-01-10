@@ -23,17 +23,47 @@
       Explora nuestro catálogo completo de productos naturales para tu bienestar
     </p>
 
+<<<<<<< HEAD
+=======
+    <!-- Buscador de productos -->
+    <div class="search-container">
+      <div class="search-card">
+        <div class="search-input-wrapper">
+          <i class="pi pi-search search-icon"></i>
+          <input type="text" pInputText [(ngModel)]="searchTerm" (input)="onSearch()"
+            placeholder="Buscar productos por nombre, descripción o categoría..." class="search-input" />
+        </div>
+        <div *ngIf="categoriaActual" class="filter-badge">
+          <i class="pi pi-filter"></i>
+          <span>Filtrando por categoría: <strong>{{ categoriaActual }}</strong></span>
+          <button pButton icon="pi pi-times" class="p-button-text p-button-sm clear-filter-btn"
+            (click)="limpiarFiltros()" label="Limpiar"></button>
+        </div>
+      </div>
+    </div>
+
+>>>>>>> 61cb42eb656f08cad540bd894946e16a0219d438
     <!-- Estados de carga y error -->
     <div *ngIf="isLoading" class="loading-container">
-      <div class="loading-spinner">
-        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Cargando productos...</p>
+      <div class="loading-card">
+        <div class="loading-icon">
+          <i class="pi pi-spin pi-spinner"></i>
+        </div>
+        <h3>Cargando productos...</h3>
+        <p>Por favor espera mientras cargamos nuestro catálogo</p>
       </div>
     </div>
 
     <div *ngIf="error()" class="error-container">
-      <p class="error-message">{{ error() }}</p>
-      <button pButton label="Reintentar" (click)="cargarProductos()" class="p-button-outlined"></button>
+      <div class="error-card">
+        <div class="error-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <h3>Error al cargar productos</h3>
+        <p class="error-message">{{ error() }}</p>
+        <button pButton label="Reintentar" icon="pi pi-refresh" (click)="cargarProductos()"
+          class="retry-button"></button>
+      </div>
     </div>
 
     <!-- Lista de productos -->
@@ -132,12 +162,20 @@
     </div>
 
     <!-- Mensaje cuando no hay productos -->
-    <div *ngIf="!isLoading && products().length === 0" class="no-products">
-      <div class="no-products-content">
-        <i class="pi pi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+    <div *ngIf="!isLoading && products().length === 0" class="empty-state-container">
+      <div class="empty-state-card">
+        <div class="empty-state-icon">
+          <i class="pi pi-inbox"></i>
+        </div>
         <h3>No hay productos disponibles</h3>
         <p>No se encontraron productos en el catálogo.</p>
+<<<<<<< HEAD
         <button pButton label="Agregar Primer Producto" icon="pi pi-plus" class="p-button-success"
+=======
+        <div class="empty-state-decoration"></div>
+        @if (isAdmin) {
+        <button pButton label="Agregar Primer Producto" icon="pi pi-plus" class="add-product-button"
+>>>>>>> 61cb42eb656f08cad540bd894946e16a0219d438
           routerLink="/productos/agregar"></button>
       </div>
     </div>
