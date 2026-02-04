@@ -9,7 +9,7 @@ import { ToastModule } from 'primeng/toast';
 import { InputTextModule } from 'primeng/inputtext';
 
 import { Producto } from '../../util/productos.interfaces'; // Tu interfaz
-import { ProductoService } from '../../services/ProductosServices/productos.service';
+import { ProductosLocalService } from '../../services/productos-local.service';
 import { AuthService } from '../../services/auth/auth.services';
 import { MessageService } from 'primeng/api';
 
@@ -56,7 +56,7 @@ export class Productos implements OnInit {
   private apiBaseUrl = 'http://localhost:8000';
 
   constructor(
-    private productoService: ProductoService,
+    private productosLocalService: ProductosLocalService,
     private messageService: MessageService,
     private authService: AuthService,
     private route: ActivatedRoute
@@ -137,9 +137,9 @@ export class Productos implements OnInit {
     this.isLoading = true;
     this.error.set(null);
 
-    this.productoService.getProductos().subscribe({
+    this.productosLocalService.getProductosLocales().subscribe({
       next: (response: any) => {
-        console.log('Respuesta de API:', response);
+        console.log('Respuesta de servicio local:', response);
 
         let productosArray: Producto[] = [];
 
@@ -373,15 +373,12 @@ export class Productos implements OnInit {
   }
 
   eliminarProducto(id: number): void {
-    this.productoService.deleteProducto(id).subscribe({
-      next: (response) => {
-        alert('Producto eliminado correctamente');
-        this.cargarProductos();
-      },
-      error: (error) => {
-        alert(`Error al eliminar producto: ${error.message}`);
-        console.error('Error:', error);
-      }
+    // Funcionalidad de eliminación deshabilitada para datos locales
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Información',
+      detail: 'La eliminación de productos no está disponible en modo local',
+      life: 3000
     });
   }
 }

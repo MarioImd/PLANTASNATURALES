@@ -11,6 +11,7 @@ export interface Producto {
   actualizado: string;
   mercado: string | null; // También podría ser null
   imagen?: string; // AGREGAR ESTA LÍNEA - campo opcional
+  ingredientes_activos?: string; // Ingredientes activos del producto
 }
 export interface ProductoFormData {
   nombre: string;
@@ -20,4 +21,5 @@ export interface ProductoFormData {
   stock: number;
   mercado: string;
   imagen?: string; // Agrega esta propiedad como opcional
+  ingredientes_activos?: string; // Ingredientes activos del producto
 }
