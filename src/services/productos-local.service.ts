@@ -19,8 +19,8 @@ export class ProductosLocalService {
             estado: true,
             creado: new Date().toISOString(),
             actualizado: new Date().toISOString(),
-            mercado: 'Local',
-            imagen: 'jabon-bioline.jpg',
+            mercado: 'https://www.mercadolibre.com.mx/jabon-natural-homeopatico-reductivo-algas-bioline-pronathom/up/MLMU993767161?pdp_filters=seller_id%3A658602262#polycard_client=search-desktop&search_layout=grid&position=3&type=product&tracking_id=5b3c7972-2edf-4e5e-9038-26c422cc37c0&wid=MLM830323542&sid=search',
+            imagen: 'https://http2.mlstatic.com/D_NQ_NP_2X_747921-MLM43810273215_102020-F.webp',
             ingredientes_activos: 'Fucus vesiculosus, Fucus vesiculosus 1X, Fucus vesiculosus 6cH, Alga marina'
         },
         {
@@ -33,8 +33,8 @@ export class ProductosLocalService {
             estado: true,
             creado: new Date().toISOString(),
             actualizado: new Date().toISOString(),
-            mercado: 'Local',
-            imagen: 'jabon-biotext.jpg',
+            mercado: 'https://www.mercadolibre.com.mx/jabon-natural-calendula-110g--biotext--pronathom/up/MLMU1003980836?pdp_filters=seller_id%3A658602262#polycard_client=search-desktop&search_layout=grid&position=1&type=product&tracking_id=7e5387ad-8766-4a18-9117-54181d69d56c&wid=MLM828487872&sid=search',
+            imagen: 'https://http2.mlstatic.com/D_NQ_NP_704339-MLM43794709757_102020-O.webp',
             ingredientes_activos: 'Caléndula, Miel de abeja 1X, Vitamina E 1X'
         },
         {
@@ -91,8 +91,8 @@ export class ProductosLocalService {
             estado: true,
             creado: new Date().toISOString(),
             actualizado: new Date().toISOString(),
-            mercado: 'Local',
-            imagen: 'crema-bioxindol.jpg',
+            mercado: 'https://www.mercadolibre.com.mx/bioxindol-crema-analgesica--3-piezas-100-ml-cu/up/MLMU702994934?pdp_filters=seller_id%3A658602262#polycard_client=search-desktop&search_layout=grid&position=2&type=product&tracking_id=1cff239e-7d92-4e39-88a8-e7caa4629103&wid=MLM1862420437&sid=search',
+            imagen: 'https://http2.mlstatic.com/D_NQ_NP_689721-MLM83625804669_042025-O.webp',
             ingredientes_activos: 'Árnica 200c, Hypéricum 200c'
         },
         {
