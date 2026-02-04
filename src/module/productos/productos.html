@@ -1,0 +1,226 @@
+<div class="productos-container">
+  <p-toast></p-toast>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Productos</h1>
+      <p class="hero-subtitle">Conectando la naturaleza con tu bienestar</p>
+      <div class="hero-decoration"></div>
+      <div class="flex justify-end mb-6">
+        @if (isAdmin) {
+        <button pButton label="Agregar Producto" icon="pi pi-plus" class="p-button-success"
+          routerLink="/productos/agregar"></button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de productos -->
+  <section class="product-lines-section">
+    <h2 class="section-title">Catálogo de Productos Pronathom®</h2>
+    <p class="section-intro">
+      Explora nuestro catálogo completo de productos naturales para tu bienestar
+    </p>
+
+
+    <!-- Buscador de productos -->
+    <div class="search-container">
+      <div class="search-card">
+        <div class="search-input-wrapper">
+          <i class="pi pi-search search-icon"></i>
+          <input type="text" pInputText [(ngModel)]="searchTerm" (input)="onSearch()"
+            placeholder="Buscar productos por nombre, descripción o categoría..." class="search-input" />
+        </div>
+        <div *ngIf="categoriaActual" class="filter-badge">
+          <i class="pi pi-filter"></i>
+          <span>Filtrando por categoría: <strong>{{ categoriaActual }}</strong></span>
+          <button pButton icon="pi pi-times" class="p-button-text p-button-sm clear-filter-btn"
+            (click)="limpiarFiltros()" label="Limpiar"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estados de carga y error -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-card">
+        <div class="loading-icon">
+          <i class="pi pi-spin pi-spinner"></i>
+        </div>
+        <h3>Cargando productos...</h3>
+        <p>Por favor espera mientras cargamos nuestro catálogo</p>
+      </div>
+    </div>
+
+    <div *ngIf="error()" class="error-container">
+      <div class="error-card">
+        <div class="error-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <h3>Error al cargar productos</h3>
+        <p class="error-message">{{ error() }}</p>
+        <button pButton label="Reintentar" icon="pi pi-refresh" (click)="cargarProductos()"
+          class="retry-button"></button>
+      </div>
+    </div>
+
+    <!-- Lista de productos -->
+    <div class="dataview-container" *ngIf="!isLoading && products().length > 0">
+      <p-dataview [value]="products()" [rows]="5" [paginator]="true">
+        <ng-template #list let-items>
+          <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+            <div *ngFor="let item of items; let first = first">
+              <div
+                style="display: flex; flex-direction: column; padding: 1.5rem; gap: 1rem; border-top: 1px solid #dee2e6;"
+                [style.border-top]="first ? 'none' : '1px solid #dee2e6'">
+
+                <!-- Imagen del Producto -->
+                <div style="position: relative; width: 160px;">
+                  <img [src]="getProductImage(item)" [alt]="item.name" (error)="handleImageError($event, item)"
+                    style="width: 160px; height: 120px; object-fit: cover; border-radius: 8px;" />
+                  <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)"
+                    style="position: absolute; left: 4px; top: 4px;" />
+                </div>
+
+                <!-- Información del Producto -->
+                <div
+                  style="display: flex; flex-direction: column; justify-content: space-between; flex: 1; gap: 1.5rem;">
+                  <div
+                    style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                    <div>
+                      <span style="font-weight: 500; color: #6c757d; font-size: 0.875rem;">{{ item.category }}</span>
+                      <div style="font-size: 1.125rem; font-weight: 500; margin-top: 0.5rem;">
+                        {{ item.name }}
+                      </div>
+                      <p style="color: #6c757d; font-size: 0.875rem; margin-top: 0.25rem;">
+                        {{ item.description }}
+                      </p>
+                    </div>
+                    <div
+                      style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border-radius: 1.5rem; background-color: #f8f9fa;">
+                      <span style="font-weight: 500; font-size: 0.875rem;">{{ item.rating.toFixed(1) }}</span>
+                      <i class="pi pi-star-fill" style="color: #fbbf24;"></i>
+                    </div>
+                  </div>
+
+                  <!-- Precio y Acciones -->
+                  <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- En lista-productos.component.html -->
+                    <!-- En tu lista de productos, en la sección de cada producto -->
+                    <!-- En tu lista de productos -->
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+
+                      <!-- Botón Editar (solo para admin) -->
+                      @if (isAdmin) {
+                      <button class="p-button-warning" pButton [routerLink]="['/productos/editar', item.id]"
+                        class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm">
+                        Editar
+                      </button>
+                      }
+
+                      <!-- Botón Eliminar (solo para admin) -->
+                      @if (isAdmin) {
+                      <button pButton (click)="confirmarEliminar(item)" class="p-button-danger">
+                        Eliminar
+                      </button>
+                      }
+                    </div>
+
+                    <div style="display: flex; flex-direction: row-reverse; gap: 0.5rem;">
+
+                      <!-- SOLUCIÓN: Solo verifica si tiene URL de mercado -->
+                      <a *ngIf="item.mercado" [href]="item.mercado" target="_blank" rel="noopener noreferrer"
+                        class="p-button p-button-primary">
+                        <i class="pi pi-shopping-cart mr-2"></i>
+                        <span>Ir a Mercado Libre</span>
+                      </a>
+
+                      <button *ngIf="!item.mercado" pButton icon="pi pi-exclamation-triangle" label="Sin enlace"
+                        disabled class="p-button-help">
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Vista de cuadrícula (opcional) -->
+        <ng-template #grid let-items>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
+
+          </div>
+        </ng-template>
+      </p-dataview>
+    </div>
+
+
+
+    <!-- Resto del template (beneficios, proceso, CTA) se mantiene igual -->
+    <!-- Beneficios -->
+    <section class="benefits-section">
+      <h2 class="section-title">¿Por Qué Elegir Pronathom®?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon">✓</div>
+          <h3>100% Natural</h3>
+          <p>Todos nuestros productos están elaborados con ingredientes naturales de la más alta calidad.</p>
+        </div>
+
+        <div class="benefit-item">
+          <div class="benefit-icon">🌱</div>
+          <h3>Sustentable</h3>
+          <p>Procesos de producción responsables con el medio ambiente y las comunidades locales.</p>
+        </div>
+
+        <div class="benefit-item">
+          <div class="benefit-icon">🔬</div>
+          <h3>Calidad Garantizada</h3>
+          <p>Productos probados y certificados que cumplen con los más altos estándares de calidad.</p>
+        </div>
+
+        <div class="benefit-item">
+          <div class="benefit-icon">❤️</div>
+          <h3>Hecho con Amor</h3>
+          <p>Cada producto es elaborado con dedicación y cuidado para tu bienestar y el de tu familia.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proceso de Elaboración -->
+    <section class="process-section">
+      <h2 class="section-title">Nuestro Proceso</h2>
+      <div class="process-grid">
+        <div class="process-card">
+          <div class="process-number">1</div>
+          <h3>Selección</h3>
+          <p>Seleccionamos cuidadosamente las mejores materias primas naturales de proveedores confiables.</p>
+        </div>
+
+        <div class="process-card">
+          <div class="process-number">2</div>
+          <h3>Elaboración</h3>
+          <p>Procesamos los ingredientes con técnicas artesanales que preservan sus propiedades naturales.</p>
+        </div>
+
+        <div class="process-card">
+          <div class="process-number">3</div>
+          <h3>Control de Calidad</h3>
+          <p>Cada producto pasa por rigurosos controles de calidad antes de llegar a tus manos.</p>
+        </div>
+
+        <div class="process-card">
+          <div class="process-number">4</div>
+          <h3>Distribución</h3>
+          <p>Empacamos y distribuimos con cuidado para mantener la frescura y calidad del producto.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>¿Listo para descubrir nuestros productos?</h2>
+      <p>Explora nuestras líneas de productos naturales y encuentra el perfecto para ti</p>
+      <a routerLink="/puntos-venta" class="cta-button">Ver Puntos de Venta</a>
+    </section>
